@@ -1,0 +1,15 @@
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.admin-sidebar__menu {
+  flex: 1;
+  padding-top: var(--spacing-md);
+  border-inline-end: none !important;
+  background: transparent !important;
+}

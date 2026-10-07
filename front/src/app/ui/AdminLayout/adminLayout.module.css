@@ -1,0 +1,21 @@
+.admin-layout {
+  min-height: 100%;
+  background: var(--color-bg);
+  align-items: flex-start;
+}
+
+.admin-layout__sider {
+  position: sticky;
+  top: 0;
+  height: calc(100dvh - var(--app-header-height));
+  max-height: calc(100dvh - var(--app-header-height));
+  overflow: hidden;
+  background: var(--color-surface) !important;
+  flex-shrink: 0;
+}
+
+.admin-layout__content {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
