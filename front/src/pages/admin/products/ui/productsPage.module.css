@@ -1,0 +1,7 @@
+.products-page__inactive {
+  margin-inline-start: var(--spacing-sm);
+}
+
+.products-page__error {
+  margin-bottom: var(--spacing-md);
+}
