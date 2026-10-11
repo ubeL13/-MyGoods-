@@ -30,7 +30,7 @@ public class ProductEditDto
     /// <summary>
     /// Цена в рублях (больше 0).
     /// </summary>
-    [Range(typeof(decimal), "0.01", "9999999999.99", ErrorMessage = "Цена должна быть больше 0.")]
+    [Range(0.01, 9999999999.99, ErrorMessage = "Цена должна быть больше 0.")]
     public decimal Price { get; set; }
 
     /// <summary>

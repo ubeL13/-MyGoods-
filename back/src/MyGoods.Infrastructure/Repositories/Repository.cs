@@ -40,7 +40,11 @@ public class Repository<TEntity>(AppDbContext dbContext) : IRepository<TEntity> 
     /// <inheritdoc />
     public async Task Update(TEntity entity)
     {
-        Set.Update(entity);
+        // Сущность, загруженная через этот же контекст, уже отслеживается:
+        // EF Core сам видит изменённые поля, достаточно сохранить.
+        if (DbContext.Entry(entity).State == EntityState.Detached)
+            Set.Update(entity);
+
         await DbContext.SaveChangesAsync();
     }
 

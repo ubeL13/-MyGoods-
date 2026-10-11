@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using MyGoods.Api.Middleware;
+using MyGoods.Application.Services;
+using MyGoods.Core.Repositories;
+using MyGoods.Dto.Services;
 using MyGoods.Infrastructure.Data;
+using MyGoods.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddControllers();
 
