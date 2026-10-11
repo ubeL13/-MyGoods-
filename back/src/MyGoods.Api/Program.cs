@@ -28,8 +28,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");
-    options.IncludeXmlComments(xmlPath);
+    // Описания из /// <summary> контроллеров (Api) и DTO (Dto)
+    foreach (var xmlPath in Directory.GetFiles(AppContext.BaseDirectory, "MyGoods.*.xml"))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
 });
 
 var app = builder.Build();
