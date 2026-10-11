@@ -34,4 +34,9 @@ public class Category
     /// Подкатегории.
     /// </summary>
     public List<Category> Children { get; set; } = [];
+
+    /// <summary>
+    /// Товары этой категории.
+    /// </summary>
+    public List<Product> Products { get; set; } = [];
 }
