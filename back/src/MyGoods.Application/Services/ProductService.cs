@@ -83,6 +83,19 @@ public class ProductService(
         return MapperHelper.ToDto(product);
     }
 
+    /// <inheritdoc />
+    public async Task<ProductDto> SetActive(Guid id, bool isActive)
+    {
+        var product = await productRepository.Read(id)
+            ?? throw new NotFoundException($"Товар с id {id} не найден.");
+
+        product.IsActive = isActive;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await productRepository.Update(product);
+        return MapperHelper.ToDto(product);
+    }
+
     /// <summary>
     /// Находит категорию или бросает ValidationException, если её нет.
     /// </summary>
