@@ -1,0 +1,11 @@
+.catalog-filters {
+  margin-bottom: var(--spacing-md);
+}
+
+.catalog-filters__search {
+  width: 280px;
+}
+
+.catalog-filters__category {
+  width: 200px;
+}

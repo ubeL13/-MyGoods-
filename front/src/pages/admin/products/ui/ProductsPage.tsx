@@ -3,6 +3,7 @@ import { Alert, Table, Tag, Typography } from 'antd'
 import { Link } from 'react-router-dom'
 
 import { StockStatusTag, type TProductListItem } from '@/entities/product'
+import { CatalogFilters } from '@/features/catalog-filters'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatPrice } from '@/shared/lib'
 
@@ -64,12 +65,22 @@ const columns: TableColumnsType<TProductListItem> = [
 ]
 
 export function ProductsPage() {
-  const { products, totalCount, page, pageSize, isLoading, error, changePage } =
-    useProductsPage()
+  const {
+    products,
+    totalCount,
+    page,
+    pageSize,
+    filters,
+    isLoading,
+    error,
+    changePage,
+    changeFilters,
+  } = useProductsPage()
 
   return (
     <section>
       <Typography.Title level={2}>Каталог товаров</Typography.Title>
+      <CatalogFilters value={filters} onChange={changeFilters} />
 
       {error && (
         <Alert
@@ -86,6 +97,7 @@ export function ProductsPage() {
         dataSource={products}
         loading={isLoading}
         scroll={{ x: 900 }}
+        locale={{ emptyText: 'Товары не найдены' }}
         pagination={{
           current: page,
           pageSize,
