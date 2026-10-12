@@ -1,6 +1,9 @@
+import { AxiosError, type AxiosResponse } from 'axios'
+
 import type { TPaginatedResponse } from '@/shared/api'
 
 import type {
+  TProductDetail,
   TProductListItem,
   TProductsFilters,
   TProductsQuery,
@@ -126,5 +129,47 @@ export function getProductsMock({
         }),
       MOCK_DELAY_MS,
     )
+  })
+}
+
+const MANUFACTURERS = ['ДомСтиль', 'Уютный дом', 'HomeLine', 'КухняПро']
+
+function createNotFoundError(): AxiosError {
+  const response = {
+    status: 404,
+    statusText: 'Not Found',
+    headers: {},
+    config: {},
+    data: { status: 404, title: 'Не найдено', detail: 'Товар не найден' },
+  } as AxiosResponse
+
+  return new AxiosError(
+    'Request failed with status code 404',
+    AxiosError.ERR_BAD_REQUEST,
+    undefined,
+    undefined,
+    response,
+  )
+}
+
+export function getProductByIdMock(productId: string): Promise<TProductDetail> {
+  const index = MOCK_PRODUCTS.findIndex((product) => product.id === productId)
+  const product = MOCK_PRODUCTS[index]
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (!product) {
+        reject(createNotFoundError())
+        return
+      }
+
+      resolve({
+        ...product,
+        description: `${product.name}. Подробное описание товара появится после заполнения карточки.`,
+        manufacturer: MANUFACTURERS[index % MANUFACTURERS.length] ?? '',
+        createdAt: '2026-09-01T10:00:00Z',
+        updatedAt: '2026-10-01T12:30:00Z',
+      })
+    }, MOCK_DELAY_MS)
   })
 }

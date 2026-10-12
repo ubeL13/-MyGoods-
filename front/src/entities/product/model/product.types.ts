@@ -22,4 +22,11 @@ export type TProductsFilters = {
   inStock?: boolean
 }
 
+export type TProductDetail = TProductListItem & {
+  description: string
+  manufacturer: string
+  createdAt: string
+  updatedAt: string
+}
+
 export type TProductsQuery = TPaginationParams & TProductsFilters

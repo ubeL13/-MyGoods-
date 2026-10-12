@@ -1,8 +1,12 @@
 import { API_ENDPOINTS, apiClient, type TPaginatedResponse } from '@/shared/api'
 
-import type { TProductListItem, TProductsQuery } from '../model/product.types'
+import type {
+  TProductDetail,
+  TProductListItem,
+  TProductsQuery,
+} from '../model/product.types'
 
-import { getProductsMock } from './product.mock'
+import { getProductByIdMock, getProductsMock } from './product.mock'
 
 const USE_PRODUCTS_MOCK = true
 
@@ -16,6 +20,20 @@ export async function getProducts(
   const { data } = await apiClient.get<TPaginatedResponse<TProductListItem>>(
     API_ENDPOINTS.products.list,
     { params: query },
+  )
+
+  return data
+}
+
+export async function getProductById(
+  productId: string,
+): Promise<TProductDetail> {
+  if (USE_PRODUCTS_MOCK) {
+    return getProductByIdMock(productId)
+  }
+
+  const { data } = await apiClient.get<TProductDetail>(
+    API_ENDPOINTS.products.byId(productId),
   )
 
   return data
