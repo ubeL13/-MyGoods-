@@ -1,8 +1,21 @@
-import type { TPaginatedResponse, TPaginationParams } from '@/shared/api'
+import type { TPaginatedResponse } from '@/shared/api'
 
-import type { TProductListItem, TStockStatus } from '../model/product.types'
-
+import type {
+  TProductListItem,
+  TProductsFilters,
+  TProductsQuery,
+  TStockStatus,
+} from '../model/product.types'
 const MOCK_DELAY_MS = 400
+
+const CATEGORY_ID_BY_NAME: Record<string, string> = {
+  Кухня: '10000000-0000-0000-0000-000000000001',
+  Ванная: '10000000-0000-0000-0000-000000000002',
+  Спальня: '10000000-0000-0000-0000-000000000003',
+  Декор: '10000000-0000-0000-0000-000000000004',
+  Хранение: '10000000-0000-0000-0000-000000000005',
+  Текстиль: '10000000-0000-0000-0000-000000000006',
+}
 
 const SOURCE: [name: string, category: string, price: number][] = [
   ['Чайник электрический', 'Кухня', 2490],
@@ -60,6 +73,7 @@ const MOCK_PRODUCTS: TProductListItem[] = SOURCE.map(
       sku: `MG-${String(index + 1).padStart(4, '0')}`,
       name,
       price,
+      categoryId: CATEGORY_ID_BY_NAME[categoryName] ?? '',
       categoryName,
       quantity,
       min,
@@ -69,12 +83,37 @@ const MOCK_PRODUCTS: TProductListItem[] = SOURCE.map(
   },
 )
 
+function matchesFilters(
+  product: TProductListItem,
+  { search, categoryId, priceFrom, priceTo, inStock }: TProductsFilters,
+): boolean {
+  if (search) {
+    const query = search.toLowerCase()
+    const isFound =
+      product.name.toLowerCase().includes(query) ||
+      product.sku.toLowerCase().includes(query)
+
+    if (!isFound) return false
+  }
+
+  if (categoryId && product.categoryId !== categoryId) return false
+  if (priceFrom !== undefined && product.price < priceFrom) return false
+  if (priceTo !== undefined && product.price > priceTo) return false
+  if (inStock && product.quantity === 0) return false
+
+  return true
+}
+
 export function getProductsMock({
   page,
   pageSize,
-}: TPaginationParams): Promise<TPaginatedResponse<TProductListItem>> {
+  ...filters
+}: TProductsQuery): Promise<TPaginatedResponse<TProductListItem>> {
+  const filtered = MOCK_PRODUCTS.filter((product) =>
+    matchesFilters(product, filters),
+  )
   const start = (page - 1) * pageSize
-  const items = MOCK_PRODUCTS.slice(start, start + pageSize)
+  const items = filtered.slice(start, start + pageSize)
 
   return new Promise((resolve) => {
     setTimeout(
@@ -83,7 +122,7 @@ export function getProductsMock({
           items,
           page,
           pageSize,
-          totalCount: MOCK_PRODUCTS.length,
+          totalCount: filtered.length,
         }),
       MOCK_DELAY_MS,
     )
