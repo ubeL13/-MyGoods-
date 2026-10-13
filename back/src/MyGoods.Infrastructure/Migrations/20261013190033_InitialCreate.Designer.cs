@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyGoods.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261011085204_InitialCreate")]
+    [Migration("20261013190033_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -102,30 +102,6 @@ namespace MyGoods.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("MyGoods.Core.Entities.ProductImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImages");
-                });
-
             modelBuilder.Entity("MyGoods.Core.Entities.RemainingProduct", b =>
                 {
                     b.Property<Guid>("Id")
@@ -170,17 +146,6 @@ namespace MyGoods.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("MyGoods.Core.Entities.ProductImage", b =>
-                {
-                    b.HasOne("MyGoods.Core.Entities.Product", "Product")
-                        .WithMany("Images")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("MyGoods.Core.Entities.RemainingProduct", b =>
                 {
                     b.HasOne("MyGoods.Core.Entities.Product", "Product")
@@ -201,8 +166,6 @@ namespace MyGoods.Infrastructure.Migrations
 
             modelBuilder.Entity("MyGoods.Core.Entities.Product", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("RemainingProduct");
                 });
 #pragma warning restore 612, 618

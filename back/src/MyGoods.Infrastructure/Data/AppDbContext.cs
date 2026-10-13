@@ -20,11 +20,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Product> Products => Set<Product>();
 
     /// <summary>
-    /// Фотографии товаров.
-    /// </summary>
-    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
-
-    /// <summary>
     /// Остатки товаров на складе.
     /// </summary>
     public DbSet<RemainingProduct> RemainingProducts => Set<RemainingProduct>();
@@ -65,20 +60,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasMany(p => p.Images)
-                .WithOne(i => i.Product)
-                .HasForeignKey(i => i.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasOne(p => p.RemainingProduct)
                 .WithOne(r => r.Product)
                 .HasForeignKey<RemainingProduct>(r => r.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<ProductImage>(entity =>
-        {
-            entity.Property(i => i.Url).IsRequired().HasMaxLength(500);
         });
     }
 }
