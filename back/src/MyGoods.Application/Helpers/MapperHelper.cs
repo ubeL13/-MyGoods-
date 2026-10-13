@@ -24,14 +24,7 @@ public static class MapperHelper
             product.IsActive,
             product.CreatedAt,
             product.UpdatedAt,
-            product.Images.Select(ToDto).ToList(),
             product.RemainingProduct == null ? null : ToDto(product.RemainingProduct));
-
-    /// <summary>
-    /// Фотография → ProductImageDto.
-    /// </summary>
-    public static ProductImageDto ToDto(ProductImage image) =>
-        new(image.Id, image.Url, image.IsMain);
 
     /// <summary>
     /// Остаток → StockDto.
