@@ -1,4 +1,4 @@
-export { getProducts } from './api/product.service'
+export { getProductById, getProducts } from './api/product.service'
 export type {
   TProductDetail,
   TProductListItem,
