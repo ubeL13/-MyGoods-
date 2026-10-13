@@ -34,4 +34,24 @@ public class ProductFilter
     /// Фильтр по признаку «в продаже». Null — показывать все.
     /// </summary>
     public bool? IsActive { get; set; }
+
+    /// <summary>
+    /// Поле сортировки: name, price, stock, createdAt.
+    /// </summary>
+    public string SortBy { get; set; } = "name";
+
+    /// <summary>
+    /// Сортировка по убыванию.
+    /// </summary>
+    public bool Descending { get; set; }
+
+    /// <summary>
+    /// Номер страницы (с 1).
+    /// </summary>
+    public int Page { get; set; } = 1;
+
+    /// <summary>
+    /// Количество товаров на странице.
+    /// </summary>
+    public int Limit { get; set; } = 20;
 }
