@@ -61,11 +61,6 @@ public class Product
     public DateTime UpdatedAt { get; set; }
 
     /// <summary>
-    /// Фотографии товара.
-    /// </summary>
-    public List<ProductImage> Images { get; set; } = [];
-
-    /// <summary>
     /// Остаток товара на складе.
     /// </summary>
     public RemainingProduct? RemainingProduct { get; set; }
