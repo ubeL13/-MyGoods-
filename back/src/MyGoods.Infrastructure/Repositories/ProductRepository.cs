@@ -12,14 +12,13 @@ namespace MyGoods.Infrastructure.Repositories;
 public class ProductRepository(AppDbContext dbContext) : Repository<Product>(dbContext), IProductRepository
 {
     /// <summary>
-    /// Возвращает товар вместе с категорией, остатком и фотографиями.
+    /// Возвращает товар вместе с категорией и остатком.
     /// </summary>
     /// <param name="id">Идентификатор товара</param>
     public override async Task<Product?> Read(Guid id) =>
         await Set
             .Include(p => p.Category)
             .Include(p => p.RemainingProduct)
-            .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == id);
 
     /// <inheritdoc />

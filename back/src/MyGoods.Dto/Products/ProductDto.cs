@@ -14,7 +14,6 @@ namespace MyGoods.Dto.Products;
 /// <param name="IsActive">В продаже (false — снят с продажи)</param>
 /// <param name="CreatedAt">Дата создания (UTC)</param>
 /// <param name="UpdatedAt">Дата изменения (UTC)</param>
-/// <param name="Images">Фотографии</param>
 /// <param name="Stock">Остаток на складе</param>
 public record ProductDto(
     Guid Id,
@@ -28,5 +27,4 @@ public record ProductDto(
     bool IsActive,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    List<ProductImageDto> Images,
     StockDto? Stock);
