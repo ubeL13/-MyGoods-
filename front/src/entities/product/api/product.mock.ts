@@ -1,6 +1,5 @@
-import { AxiosError, type AxiosResponse } from 'axios'
-
 import type { TPaginatedResponse } from '@/shared/api'
+import { createMockApiError, withMockDelay } from '@/shared/lib'
 
 import { resolveStockStatus } from '../lib/resolveStockStatus'
 import type {
@@ -10,8 +9,6 @@ import type {
   TProductsFilters,
   TProductsQuery,
 } from '../model/product.types'
-
-const MOCK_DELAY_MS = 400
 
 const CATEGORY_ID_BY_NAME: Record<string, string> = {
   Кухня: '10000000-0000-0000-0000-000000000001',
@@ -92,40 +89,6 @@ const MOCK_PRODUCTS: TProductDetail[] = SOURCE.map(
   },
 )
 
-function createMockApiError(
-  status: number,
-  title: string,
-  detail: string,
-): AxiosError {
-  const response = {
-    status,
-    statusText: title,
-    headers: {},
-    config: {},
-    data: { status, title, detail },
-  } as AxiosResponse
-
-  return new AxiosError(
-    `Request failed with status code ${status}`,
-    AxiosError.ERR_BAD_REQUEST,
-    undefined,
-    undefined,
-    response,
-  )
-}
-
-function withDelay<T>(getResult: () => T): Promise<T> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        resolve(getResult())
-      } catch (error) {
-        reject(error)
-      }
-    }, MOCK_DELAY_MS)
-  })
-}
-
 function matchesFilters(
   product: TProductListItem,
   { search, categoryId, priceFrom, priceTo, inStock }: TProductsFilters,
@@ -193,7 +156,7 @@ export function getProductsMock({
   pageSize,
   ...filters
 }: TProductsQuery): Promise<TPaginatedResponse<TProductListItem>> {
-  return withDelay(() => {
+  return withMockDelay(() => {
     const filtered = MOCK_PRODUCTS.filter((product) =>
       matchesFilters(product, filters),
     )
@@ -209,13 +172,13 @@ export function getProductsMock({
 }
 
 export function getProductByIdMock(productId: string): Promise<TProductDetail> {
-  return withDelay(() => ({ ...findProductOrThrow(productId) }))
+  return withMockDelay(() => ({ ...findProductOrThrow(productId) }))
 }
 
 export function createProductMock(
   values: TProductFormValues,
 ): Promise<TProductDetail> {
-  return withDelay(() => {
+  return withMockDelay(() => {
     const categoryName = validateValues(values)
     const now = new Date().toISOString()
     const product: TProductDetail = {
@@ -239,7 +202,7 @@ export function updateProductMock(
   productId: string,
   values: TProductFormValues,
 ): Promise<TProductDetail> {
-  return withDelay(() => {
+  return withMockDelay(() => {
     const product = findProductOrThrow(productId)
     const categoryName = validateValues(values, productId)
 
@@ -257,7 +220,7 @@ export function setProductActiveMock(
   productId: string,
   isActive: boolean,
 ): Promise<TProductDetail> {
-  return withDelay(() => {
+  return withMockDelay(() => {
     const product = findProductOrThrow(productId)
 
     product.isActive = isActive

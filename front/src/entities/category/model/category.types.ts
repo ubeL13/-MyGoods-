@@ -8,3 +8,9 @@ export type TCategory = {
 export type TCategoryTreeNode = TCategory & {
   children: TCategoryTreeNode[]
 }
+
+export type TCategoryFormValues = {
+  name: string
+  description: string
+  parentId: string | null
+}
