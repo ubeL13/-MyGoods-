@@ -1,3 +1,6 @@
 export { getCategories } from './api/category.service'
-export type { TCategory } from './model/category.types'
+export { buildCategoryTree } from './lib/buildCategoryTree'
+export type { TCategory, TCategoryTreeNode } from './model/category.types'
+export { useCategories } from './model/useCategories'
 export { useCategoryOptions } from './model/useCategoryOptions'
+export { CategoryTree } from './ui/CategoryTree'
