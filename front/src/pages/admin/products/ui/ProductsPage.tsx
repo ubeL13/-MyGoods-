@@ -1,6 +1,6 @@
 import type { TableColumnsType } from 'antd'
-import { Alert, Table, Tag, Typography } from 'antd'
-import { Link } from 'react-router-dom'
+import { Alert, Button, Flex, Table, Tag, Typography } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { StockStatusTag, type TProductListItem } from '@/entities/product'
 import { CatalogFilters } from '@/features/catalog-filters'
@@ -65,6 +65,7 @@ const columns: TableColumnsType<TProductListItem> = [
 ]
 
 export function ProductsPage() {
+  const navigate = useNavigate()
   const {
     products,
     totalCount,
@@ -79,7 +80,24 @@ export function ProductsPage() {
 
   return (
     <section>
-      <Typography.Title level={2}>Каталог товаров</Typography.Title>
+      <Flex
+        justify="space-between"
+        align="center"
+        wrap
+        gap="middle"
+        className={styles['products-page__header']}
+      >
+        <Typography.Title level={2} className={styles['products-page__title']}>
+          Каталог товаров
+        </Typography.Title>
+        <Button
+          type="primary"
+          onClick={() => navigate(APP_ROUTES.productCreate)}
+        >
+          Добавить товар
+        </Button>
+      </Flex>
+
       <CatalogFilters value={filters} onChange={changeFilters} />
 
       {error && (

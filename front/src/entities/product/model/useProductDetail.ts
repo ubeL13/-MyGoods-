@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { getProductById, type TProductDetail } from '@/entities/product'
 import { getApiErrorMessage, isNotFoundError } from '@/shared/lib'
+
+import { getProductById } from '../api/product.service'
+
+import type { TProductDetail } from './product.types'
 
 type TLoadResult = {
   productId: string

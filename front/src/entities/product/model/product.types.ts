@@ -29,4 +29,14 @@ export type TProductDetail = TProductListItem & {
   updatedAt: string
 }
 
+export type TProductFormValues = {
+  categoryId: string
+  sku: string
+  name: string
+  price: number
+  description: string
+  manufacturer: string
+  min: number
+}
+
 export type TProductsQuery = TPaginationParams & TProductsFilters

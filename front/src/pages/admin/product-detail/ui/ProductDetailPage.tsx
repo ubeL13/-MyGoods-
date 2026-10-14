@@ -12,11 +12,9 @@ import {
 } from 'antd'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-import { StockStatusTag } from '@/entities/product'
+import { StockStatusTag, useProductDetail } from '@/entities/product'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime, formatPrice } from '@/shared/lib'
-
-import { useProductDetail } from '../model/useProductDetail'
 
 import styles from './productDetailPage.module.css'
 
@@ -65,6 +63,11 @@ export function ProductDetailPage() {
               {product.name}
             </Typography.Title>
             {!product.isActive && <Tag>Снят с продажи</Tag>}
+            <Button
+              onClick={() => navigate(APP_ROUTES.productEdit(product.id))}
+            >
+              Редактировать
+            </Button>
           </Flex>
 
           <Card

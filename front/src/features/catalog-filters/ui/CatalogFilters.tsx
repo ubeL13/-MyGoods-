@@ -1,9 +1,8 @@
 import { Button, Checkbox, Flex, Input, InputNumber, Select } from 'antd'
 import { useState } from 'react'
 
+import { useCategoryOptions } from '@/entities/category'
 import type { TProductsFilters } from '@/entities/product'
-
-import { useCategoryOptions } from '../model/useCategoryOptions'
 
 import styles from './catalogFilters.module.css'
 
