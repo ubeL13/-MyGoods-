@@ -19,92 +19,69 @@ public static class ProductDataSeeder
             return;
         }
 
-        // Получаем существующие категории, чтобы привязать к ним товары
         var categories = await db.Categories.ToListAsync();
         if (categories.Count == 0)
         {
             return;
         }
 
+        var byName = categories.ToDictionary(c => c.Name, c => c.Id);
         var now = DateTime.UtcNow;
-        var products = new List<Product>();
-        var remainings = new List<RemainingProduct>();
 
-        // Массив данных для генерации 24 товаров (по 4 на каждую из 6 категорий)
-        for (int i = 1; i <= 24; i++)
+        var items = new (string Category, string Sku, string Name, string Manufacturer, decimal Price, int Quantity, int Min, bool IsActive)[]
         {
-            var category = categories[(i - 1) % categories.Count];
-            var sku = $"SKU-PROD-{i:D3}";
-            var name = $"Товар тестовый {i}";
-            var price = 100m * i + 99.99m;
-            var description = $"Описание для тестового товара номер {i}, относящегося к категории {category.Name}.";
-            var manufacturer = i % 2 == 0 ? "BrandA" : "BrandB";
+            ("Смартфоны", "PHN-001", "Смартфон Samsung Galaxy A55 128 ГБ", "Samsung", 34990m, 25, 5, true),
+            ("Смартфоны", "PHN-002", "Смартфон Apple iPhone 15 128 ГБ", "Apple", 79990m, 3, 5, true),
+            ("Смартфоны", "PHN-003", "Смартфон Xiaomi Redmi Note 13", "Xiaomi", 19990m, 0, 5, true),
+            ("Смартфоны", "PHN-004", "Смартфон Google Pixel 8", "Google", 59990m, 0, 2, false),
+            ("Смартфоны", "PHN-005", "Смартфон Honor 90", "Honor", 32990m, 12, 4, true),
+            ("Смартфоны", "PHN-006", "Смартфон Realme 12 Pro", "Realme", 27990m, 4, 4, true),
 
-            var product = NewProduct(sku, name, price, description, manufacturer, category.Id, now);
-            products.Add(product);
+            ("Ноутбуки", "NB-001", "Ноутбук Lenovo IdeaPad Slim 5", "Lenovo", 64990m, 8, 3, true),
+            ("Ноутбуки", "NB-002", "Ноутбук ASUS VivoBook 15", "ASUS", 52990m, 2, 3, true),
+            ("Ноутбуки", "NB-003", "Ноутбук Apple MacBook Air 13 M2", "Apple", 109990m, 0, 2, true),
+            ("Ноутбуки", "NB-004", "Ноутбук HP Pavilion 15", "HP", 58990m, 15, 3, true),
+            ("Ноутбуки", "NB-005", "Ноутбук Acer Aspire 5", "Acer", 47990m, 1, 3, false),
+            ("Ноутбуки", "NB-006", "Ноутбук Huawei MateBook D 16", "Huawei", 69990m, 6, 3, true),
 
-            // Распределение статусов остатков:
-            // 1) Нет в наличии (Quantity == 0)
-            // 2) Заканчивается (Quantity <= Min)
-            // 3) В наличии (Quantity > Min)
-            int quantity;
-            int min = 5;
+            ("Футболки", "TSH-001", "Футболка хлопковая белая", "Befree", 990m, 40, 10, true),
+            ("Футболки", "TSH-002", "Футболка оверсайз чёрная", "Gloria Jeans", 1290m, 7, 10, true),
+            ("Футболки", "TSH-003", "Футболка с принтом", "O'stin", 1490m, 0, 5, true),
+            ("Футболки", "TSH-004", "Футболка поло синяя", "Zarina", 1990m, 18, 5, true),
+            ("Футболки", "TSH-005", "Лонгслив серый", "Befree", 1690m, 5, 5, true),
+            ("Футболки", "TSH-006", "Майка спортивная", "Demix", 790m, 30, 8, true),
 
-            int mod = i % 3;
-            if (mod == 0)
-            {
-                quantity = 0; // Нет в наличии
-            }
-            else if (mod == 1)
-            {
-                quantity = 2; // Заканчивается (2 <= 5)
-            }
-            else
-            {
-                quantity = 50; // В наличии (50 > 5)
-            }
+            ("Куртки", "JKT-001", "Пуховик зимний чёрный", "Zolla", 8990m, 9, 3, true),
+            ("Куртки", "JKT-002", "Ветровка непромокаемая", "Demix", 4490m, 2, 3, true),
+            ("Куртки", "JKT-003", "Куртка джинсовая", "Gloria Jeans", 3990m, 0, 2, true),
+            ("Куртки", "JKT-004", "Парка утеплённая", "O'stin", 7490m, 11, 3, true),
+            ("Куртки", "JKT-005", "Бомбер оливковый", "Befree", 3490m, 0, 2, false),
+            ("Куртки", "JKT-006", "Куртка демисезонная", "Zolla", 5990m, 3, 3, true),
+        };
 
-            var remaining = new RemainingProduct
+        foreach (var item in items)
+        {
+            db.Products.Add(new Product
             {
                 Id = Guid.NewGuid(),
-                ProductId = product.Id,
-                Quantity = quantity,
-                Min = min
-            };
-            remainings.Add(remaining);
+                CategoryId = byName[item.Category],
+                Sku = item.Sku,
+                Name = item.Name,
+                Manufacturer = item.Manufacturer,
+                Price = item.Price,
+                Description = $"{item.Name}. Тестовый товар для демонстрации каталога.",
+                IsActive = item.IsActive,
+                CreatedAt = now,
+                UpdatedAt = now,
+                RemainingProduct = new RemainingProduct
+                {
+                    Id = Guid.NewGuid(),
+                    Quantity = item.Quantity,
+                    Min = item.Min
+                }
+            });
         }
 
-        db.Products.AddRange(products);
         await db.SaveChangesAsync();
-
-        db.RemainingProducts.AddRange(remainings);
-        await db.SaveChangesAsync();
-    }
-
-    /// <summary>
-    /// Вспомогательный метод для создания экземпляра Product с обязательными полями.
-    /// </summary>
-    private static Product NewProduct(
-        string sku,
-        string name,
-        decimal price,
-        string description,
-        string manufacturer,
-        Guid categoryId,
-        DateTime now)
-    {
-        return new Product
-        {
-            Id = Guid.NewGuid(),
-            Sku = sku,
-            Name = name,
-            Price = price,
-            Description = description,
-            Manufacturer = manufacturer,
-            CategoryId = categoryId,
-            IsActive = true,
-            CreatedAt = now,
-            UpdatedAt = now
-        };
     }
 }
