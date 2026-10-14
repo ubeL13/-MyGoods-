@@ -27,4 +27,12 @@ public interface IProductService
     /// <param name="dto">Данные формы товара</param>
     /// <returns>Изменённый товар</returns>
     Task<ProductDto> Update(Guid id, ProductEditDto dto);
+
+    /// <summary>
+    /// Снимает товар с продажи или возвращает в продажу. Товар не удаляется.
+    /// </summary>
+    /// <param name="id">Идентификатор товара</param>
+    /// <param name="isActive">True — в продаже, false — снят с продажи</param>
+    /// <returns>Изменённый товар</returns>
+    Task<ProductDto> SetActive(Guid id, bool isActive);
 }
