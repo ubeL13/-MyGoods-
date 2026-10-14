@@ -45,5 +45,7 @@ export function useProductDetail(productId: string) {
     isLoading: !isCurrent,
     error: isCurrent ? result?.error : undefined,
     isNotFound: isCurrent ? (result?.isNotFound ?? false) : false,
+    replaceProduct: (product: TProductDetail) =>
+      setResult({ productId, product }),
   }
 }

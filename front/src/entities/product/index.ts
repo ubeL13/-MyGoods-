@@ -2,6 +2,7 @@ export {
   createProduct,
   getProductById,
   getProducts,
+  setProductActive,
   updateProduct,
 } from './api/product.service'
 export type {

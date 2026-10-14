@@ -2,13 +2,13 @@ import { AxiosError, type AxiosResponse } from 'axios'
 
 import type { TPaginatedResponse } from '@/shared/api'
 
+import { resolveStockStatus } from '../lib/resolveStockStatus'
 import type {
   TProductDetail,
   TProductFormValues,
   TProductListItem,
   TProductsFilters,
   TProductsQuery,
-  TStockStatus,
 } from '../model/product.types'
 
 const MOCK_DELAY_MS = 400
@@ -67,12 +67,6 @@ const SOURCE: [name: string, category: string, price: number][] = [
   ['Зеркало настенное', 'Декор', 2990],
   ['Ящик для игрушек', 'Хранение', 1590],
 ]
-
-function resolveStockStatus(quantity: number, min: number): TStockStatus {
-  if (quantity === 0) return 'OutOfStock'
-  if (quantity <= min) return 'LowStock'
-  return 'InStock'
-}
 
 const MOCK_PRODUCTS: TProductDetail[] = SOURCE.map(
   ([name, categoryName, price], index) => {
@@ -254,6 +248,20 @@ export function updateProductMock(
       stockStatus: resolveStockStatus(product.quantity, values.min),
       updatedAt: new Date().toISOString(),
     })
+
+    return { ...product }
+  })
+}
+
+export function setProductActiveMock(
+  productId: string,
+  isActive: boolean,
+): Promise<TProductDetail> {
+  return withDelay(() => {
+    const product = findProductOrThrow(productId)
+
+    product.isActive = isActive
+    product.updatedAt = new Date().toISOString()
 
     return { ...product }
   })

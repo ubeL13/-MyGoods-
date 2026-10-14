@@ -13,6 +13,7 @@ import {
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { StockStatusTag, useProductDetail } from '@/entities/product'
+import { ToggleProductActiveButton } from '@/features/product-toggle-active'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime, formatPrice } from '@/shared/lib'
 
@@ -21,7 +22,8 @@ import styles from './productDetailPage.module.css'
 export function ProductDetailPage() {
   const { productId = '' } = useParams<{ productId: string }>()
   const navigate = useNavigate()
-  const { product, isLoading, error, isNotFound } = useProductDetail(productId)
+  const { product, isLoading, error, isNotFound, replaceProduct } =
+    useProductDetail(productId)
 
   if (isNotFound) {
     return (
@@ -68,6 +70,11 @@ export function ProductDetailPage() {
             >
               Редактировать
             </Button>
+            <ToggleProductActiveButton
+              productId={product.id}
+              isActive={product.isActive}
+              onChange={replaceProduct}
+            />
           </Flex>
 
           <Card
