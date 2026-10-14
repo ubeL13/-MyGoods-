@@ -107,3 +107,27 @@ git branch -d us-01-05-catalog-table
 
 - Пароли, токены, строки подключения к реальным базам. Для этого есть `.env` (он в `.gitignore`) и `.env.example` с пустыми значениями.
 - Исключение: учебный пароль локальной базы из `docker-compose.yml` можно хранить в `appsettings.Development.json` — эта база есть только у разработчика на компьютере.
+
+## 5. Как запустить проект
+
+Нужны: .NET 9 SDK, Docker Desktop, `dotnet-ef`, Node.js 20+. Подробно — в [`back/readme.md`](back/readme.md) и [`front/readme.md`](front/readme.md).
+
+1. Бэкенд (из папки `back`):
+
+   ```bash
+   docker compose up -d
+   dotnet ef database update --project src/MyGoods.Infrastructure --startup-project src/MyGoods.Api
+   dotnet run --project src/MyGoods.Api --launch-profile http
+   ```
+
+   API — http://localhost:8080, Swagger — http://localhost:8080/swagger
+
+2. Фронтенд (из папки `front`, в отдельном терминале):
+
+   ```bash
+   npm install
+   cp .env.example .env
+   npm run dev
+   ```
+
+   Приложение — http://localhost:5173
