@@ -1,0 +1,21 @@
+.product-detail__back {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.product-detail__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.product-detail__title {
+  margin: 0;
+}
+
+.product-detail__card {
+  margin-bottom: var(--spacing-md);
+}
+
+.product-detail__label {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-muted);
+}
