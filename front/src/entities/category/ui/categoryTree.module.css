@@ -1,0 +1,15 @@
+.category-tree__node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xs) 0;
+}
+
+.category-tree__name {
+  font-weight: 500;
+}
+
+.category-tree__description {
+  margin-inline-start: var(--spacing-sm);
+}
