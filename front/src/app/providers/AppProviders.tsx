@@ -1,4 +1,4 @@
-import { ConfigProvider } from 'antd'
+import { App as AntdApp, ConfigProvider } from 'antd'
 import ruRU from 'antd/locale/ru_RU'
 import { RouterProvider } from 'react-router-dom'
 
@@ -10,7 +10,9 @@ export function AppProviders() {
       locale={ruRU}
       theme={{ token: { colorBgLayout: '#ffffff' } }}
     >
-      <RouterProvider router={router} />
+      <AntdApp>
+        <RouterProvider router={router} />
+      </AntdApp>
     </ConfigProvider>
   )
 }

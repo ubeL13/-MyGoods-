@@ -1,3 +1,11 @@
+.products-page__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.products-page__title {
+  margin: 0;
+}
+
 .products-page__inactive {
   margin-inline-start: var(--spacing-sm);
 }

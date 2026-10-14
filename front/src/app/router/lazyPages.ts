@@ -12,6 +12,18 @@ export const ProductDetailPageLazy = lazy(() =>
   })),
 )
 
+export const ProductCreatePageLazy = lazy(() =>
+  import('@/pages/admin/product-create').then((module) => ({
+    default: module.ProductCreatePage,
+  })),
+)
+
+export const ProductEditPageLazy = lazy(() =>
+  import('@/pages/admin/product-edit').then((module) => ({
+    default: module.ProductEditPage,
+  })),
+)
+
 export const CategoriesPageLazy = lazy(() =>
   import('@/pages/admin/categories').then((module) => ({
     default: module.CategoriesPage,

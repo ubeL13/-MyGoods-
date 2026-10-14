@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { getCategories } from '@/entities/category'
+import { getCategories } from '../api/category.service'
 
 type TCategoryOption = {
   value: string

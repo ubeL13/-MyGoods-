@@ -2,11 +2,24 @@ import { API_ENDPOINTS, apiClient, type TPaginatedResponse } from '@/shared/api'
 
 import type {
   TProductDetail,
+  TProductFormValues,
   TProductListItem,
   TProductsQuery,
 } from '../model/product.types'
 
-import { getProductByIdMock, getProductsMock } from './product.mock'
+import type { TPagedResultDto, TProductDto } from './product.dto'
+import {
+  mapProductDto,
+  mapProductsPageDto,
+  mapProductsQuery,
+} from './product.mapper'
+import {
+  createProductMock,
+  getProductByIdMock,
+  getProductsMock,
+  setProductActiveMock,
+  updateProductMock,
+} from './product.mock'
 
 const USE_PRODUCTS_MOCK = true
 
@@ -17,12 +30,12 @@ export async function getProducts(
     return getProductsMock(query)
   }
 
-  const { data } = await apiClient.get<TPaginatedResponse<TProductListItem>>(
+  const { data } = await apiClient.get<TPagedResultDto<TProductDto>>(
     API_ENDPOINTS.products.list,
-    { params: query },
+    { params: mapProductsQuery(query) },
   )
 
-  return data
+  return mapProductsPageDto(data)
 }
 
 export async function getProductById(
@@ -32,9 +45,56 @@ export async function getProductById(
     return getProductByIdMock(productId)
   }
 
-  const { data } = await apiClient.get<TProductDetail>(
+  const { data } = await apiClient.get<TProductDto>(
     API_ENDPOINTS.products.byId(productId),
   )
 
-  return data
+  return mapProductDto(data)
+}
+
+export async function createProduct(
+  values: TProductFormValues,
+): Promise<TProductDetail> {
+  if (USE_PRODUCTS_MOCK) {
+    return createProductMock(values)
+  }
+
+  const { data } = await apiClient.post<TProductDto>(
+    API_ENDPOINTS.products.list,
+    values,
+  )
+
+  return mapProductDto(data)
+}
+
+export async function updateProduct(
+  productId: string,
+  values: TProductFormValues,
+): Promise<TProductDetail> {
+  if (USE_PRODUCTS_MOCK) {
+    return updateProductMock(productId, values)
+  }
+
+  const { data } = await apiClient.put<TProductDto>(
+    API_ENDPOINTS.products.byId(productId),
+    values,
+  )
+
+  return mapProductDto(data)
+}
+
+export async function setProductActive(
+  productId: string,
+  isActive: boolean,
+): Promise<TProductDetail> {
+  if (USE_PRODUCTS_MOCK) {
+    return setProductActiveMock(productId, isActive)
+  }
+
+  const { data } = await apiClient.patch<TProductDto>(
+    API_ENDPOINTS.products.active(productId),
+    { isActive },
+  )
+
+  return mapProductDto(data)
 }

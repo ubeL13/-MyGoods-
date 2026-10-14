@@ -1,4 +1,5 @@
 export { formatDateTime } from './formatDateTime'
 export { formatPrice } from './formatPrice'
 export { getApiErrorMessage } from './getApiErrorMessage'
+export { isConflictError } from './isConflictError'
 export { isNotFoundError } from './isNotFoundError'

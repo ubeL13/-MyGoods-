@@ -2,13 +2,15 @@ import { AxiosError, type AxiosResponse } from 'axios'
 
 import type { TPaginatedResponse } from '@/shared/api'
 
+import { resolveStockStatus } from '../lib/resolveStockStatus'
 import type {
   TProductDetail,
+  TProductFormValues,
   TProductListItem,
   TProductsFilters,
   TProductsQuery,
-  TStockStatus,
 } from '../model/product.types'
+
 const MOCK_DELAY_MS = 400
 
 const CATEGORY_ID_BY_NAME: Record<string, string> = {
@@ -19,6 +21,12 @@ const CATEGORY_ID_BY_NAME: Record<string, string> = {
   Хранение: '10000000-0000-0000-0000-000000000005',
   Текстиль: '10000000-0000-0000-0000-000000000006',
 }
+
+const CATEGORY_NAME_BY_ID: Record<string, string> = Object.fromEntries(
+  Object.entries(CATEGORY_ID_BY_NAME).map(([name, id]) => [id, name]),
+)
+
+const MANUFACTURERS = ['ДомСтиль', 'Уютный дом', 'HomeLine', 'КухняПро']
 
 const SOURCE: [name: string, category: string, price: number][] = [
   ['Чайник электрический', 'Кухня', 2490],
@@ -60,13 +68,7 @@ const SOURCE: [name: string, category: string, price: number][] = [
   ['Ящик для игрушек', 'Хранение', 1590],
 ]
 
-function resolveStockStatus(quantity: number, min: number): TStockStatus {
-  if (quantity === 0) return 'OutOfStock'
-  if (quantity <= min) return 'LowStock'
-  return 'InStock'
-}
-
-const MOCK_PRODUCTS: TProductListItem[] = SOURCE.map(
+const MOCK_PRODUCTS: TProductDetail[] = SOURCE.map(
   ([name, categoryName, price], index) => {
     const quantity = index % 7 === 0 ? 0 : (index * 13) % 45
     const min = 8 + (index % 3) * 6
@@ -82,9 +84,47 @@ const MOCK_PRODUCTS: TProductListItem[] = SOURCE.map(
       min,
       stockStatus: resolveStockStatus(quantity, min),
       isActive: index % 11 !== 5,
+      description: `${name}. Подробное описание товара появится после заполнения карточки.`,
+      manufacturer: MANUFACTURERS[index % MANUFACTURERS.length] ?? '',
+      createdAt: '2026-09-01T10:00:00Z',
+      updatedAt: '2026-10-01T12:30:00Z',
     }
   },
 )
+
+function createMockApiError(
+  status: number,
+  title: string,
+  detail: string,
+): AxiosError {
+  const response = {
+    status,
+    statusText: title,
+    headers: {},
+    config: {},
+    data: { status, title, detail },
+  } as AxiosResponse
+
+  return new AxiosError(
+    `Request failed with status code ${status}`,
+    AxiosError.ERR_BAD_REQUEST,
+    undefined,
+    undefined,
+    response,
+  )
+}
+
+function withDelay<T>(getResult: () => T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(getResult())
+      } catch (error) {
+        reject(error)
+      }
+    }, MOCK_DELAY_MS)
+  })
+}
 
 function matchesFilters(
   product: TProductListItem,
@@ -107,69 +147,122 @@ function matchesFilters(
   return true
 }
 
+function findProductOrThrow(productId: string): TProductDetail {
+  const product = MOCK_PRODUCTS.find((item) => item.id === productId)
+
+  if (!product) {
+    throw createMockApiError(404, 'Не найдено', 'Товар не найден')
+  }
+
+  return product
+}
+
+function validateValues(
+  values: TProductFormValues,
+  productId?: string,
+): string {
+  const isSkuTaken = MOCK_PRODUCTS.some(
+    (item) =>
+      item.id !== productId &&
+      item.sku.toLowerCase() === values.sku.toLowerCase(),
+  )
+
+  if (isSkuTaken) {
+    throw createMockApiError(
+      409,
+      'Конфликт',
+      `Артикул «${values.sku}» уже занят другим товаром.`,
+    )
+  }
+
+  const categoryName = CATEGORY_NAME_BY_ID[values.categoryId]
+
+  if (!categoryName) {
+    throw createMockApiError(
+      400,
+      'Ошибка валидации',
+      `Категория с id ${values.categoryId} не существует.`,
+    )
+  }
+
+  return categoryName
+}
+
 export function getProductsMock({
   page,
   pageSize,
   ...filters
 }: TProductsQuery): Promise<TPaginatedResponse<TProductListItem>> {
-  const filtered = MOCK_PRODUCTS.filter((product) =>
-    matchesFilters(product, filters),
-  )
-  const start = (page - 1) * pageSize
-  const items = filtered.slice(start, start + pageSize)
-
-  return new Promise((resolve) => {
-    setTimeout(
-      () =>
-        resolve({
-          items,
-          page,
-          pageSize,
-          totalCount: filtered.length,
-        }),
-      MOCK_DELAY_MS,
+  return withDelay(() => {
+    const filtered = MOCK_PRODUCTS.filter((product) =>
+      matchesFilters(product, filters),
     )
+    const start = (page - 1) * pageSize
+
+    return {
+      items: filtered.slice(start, start + pageSize),
+      page,
+      pageSize,
+      totalCount: filtered.length,
+    }
   })
 }
 
-const MANUFACTURERS = ['ДомСтиль', 'Уютный дом', 'HomeLine', 'КухняПро']
-
-function createNotFoundError(): AxiosError {
-  const response = {
-    status: 404,
-    statusText: 'Not Found',
-    headers: {},
-    config: {},
-    data: { status: 404, title: 'Не найдено', detail: 'Товар не найден' },
-  } as AxiosResponse
-
-  return new AxiosError(
-    'Request failed with status code 404',
-    AxiosError.ERR_BAD_REQUEST,
-    undefined,
-    undefined,
-    response,
-  )
+export function getProductByIdMock(productId: string): Promise<TProductDetail> {
+  return withDelay(() => ({ ...findProductOrThrow(productId) }))
 }
 
-export function getProductByIdMock(productId: string): Promise<TProductDetail> {
-  const index = MOCK_PRODUCTS.findIndex((product) => product.id === productId)
-  const product = MOCK_PRODUCTS[index]
+export function createProductMock(
+  values: TProductFormValues,
+): Promise<TProductDetail> {
+  return withDelay(() => {
+    const categoryName = validateValues(values)
+    const now = new Date().toISOString()
+    const product: TProductDetail = {
+      ...values,
+      id: crypto.randomUUID(),
+      categoryName,
+      quantity: 0,
+      stockStatus: resolveStockStatus(0, values.min),
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    }
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (!product) {
-        reject(createNotFoundError())
-        return
-      }
+    MOCK_PRODUCTS.unshift(product)
 
-      resolve({
-        ...product,
-        description: `${product.name}. Подробное описание товара появится после заполнения карточки.`,
-        manufacturer: MANUFACTURERS[index % MANUFACTURERS.length] ?? '',
-        createdAt: '2026-09-01T10:00:00Z',
-        updatedAt: '2026-10-01T12:30:00Z',
-      })
-    }, MOCK_DELAY_MS)
+    return { ...product }
+  })
+}
+
+export function updateProductMock(
+  productId: string,
+  values: TProductFormValues,
+): Promise<TProductDetail> {
+  return withDelay(() => {
+    const product = findProductOrThrow(productId)
+    const categoryName = validateValues(values, productId)
+
+    Object.assign(product, values, {
+      categoryName,
+      stockStatus: resolveStockStatus(product.quantity, values.min),
+      updatedAt: new Date().toISOString(),
+    })
+
+    return { ...product }
+  })
+}
+
+export function setProductActiveMock(
+  productId: string,
+  isActive: boolean,
+): Promise<TProductDetail> {
+  return withDelay(() => {
+    const product = findProductOrThrow(productId)
+
+    product.isActive = isActive
+    product.updatedAt = new Date().toISOString()
+
+    return { ...product }
   })
 }

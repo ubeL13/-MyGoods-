@@ -1,0 +1,11 @@
+.product-form {
+  max-width: 640px;
+}
+
+.product-form__error {
+  margin-bottom: var(--spacing-md);
+}
+
+.product-form__number {
+  width: 200px;
+}
