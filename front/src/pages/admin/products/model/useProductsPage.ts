@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { getProducts, type TProductListItem } from '@/entities/product'
+import {
+  getProducts,
+  type TProductListItem,
+  type TProductsFilters,
+} from '@/entities/product'
 import type { TPaginatedResponse, TPaginationParams } from '@/shared/api'
 import { getApiErrorMessage } from '@/shared/lib'
 
@@ -17,18 +21,19 @@ export function useProductsPage() {
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE,
   })
+  const [filters, setFilters] = useState<TProductsFilters>({})
   const [result, setResult] = useState<TLoadResult | null>(null)
   const [lastData, setLastData] = useState<
     TPaginatedResponse<TProductListItem> | undefined
   >()
 
   const { page, pageSize } = pagination
-  const requestKey = `${page}:${pageSize}`
+  const requestKey = JSON.stringify({ page, pageSize, ...filters })
 
   useEffect(() => {
     let isCancelled = false
 
-    getProducts({ page, pageSize })
+    getProducts({ page, pageSize, ...filters })
       .then((data) => {
         if (isCancelled) return
         setResult({ key: requestKey, data })
@@ -42,7 +47,7 @@ export function useProductsPage() {
     return () => {
       isCancelled = true
     }
-  }, [page, pageSize, requestKey])
+  }, [page, pageSize, filters, requestKey])
 
   const isLoading = result?.key !== requestKey
 
@@ -51,6 +56,7 @@ export function useProductsPage() {
     totalCount: lastData?.totalCount ?? 0,
     page,
     pageSize,
+    filters,
     isLoading,
     error: isLoading ? undefined : result?.error,
     changePage: (nextPage: number, nextPageSize: number) =>
@@ -58,5 +64,9 @@ export function useProductsPage() {
         page: nextPageSize === pageSize ? nextPage : 1,
         pageSize: nextPageSize,
       }),
+    changeFilters: (nextFilters: TProductsFilters) => {
+      setFilters(nextFilters)
+      setPagination((prev) => ({ ...prev, page: 1 }))
+    },
   }
 }
