@@ -1,15 +1,49 @@
+.category-tree :global(.ant-tree-node-content-wrapper) {
+  min-width: 0;
+}
+
+.category-tree :global(.ant-tree-title) {
+  display: block;
+  min-width: 0;
+}
+
+.category-tree__actions {
+  flex-shrink: 0;
+}
+
 .category-tree__node {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
+  min-width: 0;
   padding: var(--spacing-xs) 0;
 }
 
+.category-tree__info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
 .category-tree__name {
+  flex-shrink: 0;
   font-weight: 500;
 }
 
+.category-tree__count {
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
 .category-tree__description {
-  margin-inline-start: var(--spacing-sm);
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

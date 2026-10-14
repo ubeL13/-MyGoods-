@@ -1,0 +1,7 @@
+.categories-page__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.categories-page__title {
+  margin: 0;
+}

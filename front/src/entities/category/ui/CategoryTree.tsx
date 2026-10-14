@@ -1,4 +1,4 @@
-import { Tree, type TreeDataNode, Typography } from 'antd'
+import { Tag, Tree, type TreeDataNode } from 'antd'
 import type { ReactNode } from 'react'
 
 import type { TCategoryTreeNode } from '../model/category.types'
@@ -18,18 +18,31 @@ function toTreeData(
     key: node.id,
     title: (
       <div className={styles['category-tree__node']}>
-        <div>
+        <div className={styles['category-tree__info']}>
           <span className={styles['category-tree__name']}>{node.name}</span>
+          {node.children.length > 0 && (
+            <Tag
+              variant="filled"
+              title={`Подкатегорий: ${node.children.length}`}
+              className={styles['category-tree__count']}
+            >
+              {node.children.length}
+            </Tag>
+          )}
           {node.description && (
-            <Typography.Text
-              type="secondary"
+            <span
+              title={node.description}
               className={styles['category-tree__description']}
             >
               {node.description}
-            </Typography.Text>
+            </span>
           )}
         </div>
-        {renderActions?.(node)}
+        {renderActions && (
+          <div className={styles['category-tree__actions']}>
+            {renderActions(node)}
+          </div>
+        )}
       </div>
     ),
     children: node.children.length
@@ -46,6 +59,7 @@ export function CategoryTree({ nodes, renderActions }: TCategoryTreeProps) {
       showLine
       blockNode
       selectable={false}
+      className={styles['category-tree']}
     />
   )
 }
