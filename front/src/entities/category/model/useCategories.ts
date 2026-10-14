@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { getApiErrorMessage } from '@/shared/lib'
 
 import { getCategories } from '../api/category.service'
+
 import type { TCategory } from './category.types'
 
 type TLoadResult = {

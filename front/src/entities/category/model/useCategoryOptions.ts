@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { getCategories } from '../api/category.service'
+
 import type { TCategory } from './category.types'
 
 type TCategoryOption = {
