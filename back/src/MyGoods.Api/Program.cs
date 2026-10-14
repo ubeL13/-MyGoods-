@@ -52,6 +52,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        
+        // Запускаем заполнение данных (асинхронно)
+        await CategoryDataSeeder.SeedAsync(db);
+        await ProductDataSeeder.SeedAsync(db);
+    }
 }
 
 app.UseHttpsRedirection();
@@ -60,4 +68,4 @@ app.UseCors("Frontend");
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
