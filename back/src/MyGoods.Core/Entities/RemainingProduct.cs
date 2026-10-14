@@ -1,3 +1,5 @@
+using MyGoods.Core.Enums;
+
 namespace MyGoods.Core.Entities;
 
 /// <summary>
@@ -29,4 +31,13 @@ public class RemainingProduct
     /// Минимальный остаток: если количество не больше него, товар «заканчивается».
     /// </summary>
     public int Min { get; set; }
+
+    /// <summary>
+    /// Статус остатка. Не хранится в базе — всегда вычисляется из Quantity и Min,
+    /// поэтому не может разойтись с количеством.
+    /// </summary>
+    public StockStatus Status =>
+        Quantity <= 0 ? StockStatus.OutOfStock
+        : Quantity <= Min ? StockStatus.LessMinimum
+        : StockStatus.Available;
 }

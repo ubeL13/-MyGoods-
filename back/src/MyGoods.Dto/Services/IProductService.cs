@@ -8,6 +8,14 @@ namespace MyGoods.Dto.Services;
 public interface IProductService
 {
     /// <summary>
+    /// Каталог товаров: поиск, фильтры, сортировка и пагинация.
+    /// Если указанной категории нет — ValidationException (400).
+    /// </summary>
+    /// <param name="query">Параметры каталога</param>
+    /// <returns>Страница товаров и сведения о страницах</returns>
+    Task<PagedResult<ProductDto>> GetCatalog(ProductQueryDto query);
+
+    /// <summary>
     /// Возвращает товар по идентификатору. Если товара нет — NotFoundException (404).
     /// </summary>
     /// <param name="id">Идентификатор товара</param>

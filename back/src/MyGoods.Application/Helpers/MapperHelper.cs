@@ -30,5 +30,5 @@ public static class MapperHelper
     /// Остаток → StockDto.
     /// </summary>
     public static StockDto ToDto(RemainingProduct stock) =>
-        new(stock.Quantity, stock.Min);
+        new(stock.Quantity, stock.Min, stock.Status.ToString());
 }

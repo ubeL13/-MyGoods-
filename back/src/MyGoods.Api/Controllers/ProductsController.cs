@@ -1,17 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
+using MyGoods.Dto;
 using MyGoods.Dto.Products;
 using MyGoods.Dto.Services;
 
 namespace MyGoods.Api.Controllers;
 
 /// <summary>
-/// Товары: создание, редактирование, снятие с продажи.
+/// Товары: каталог, карточка, создание, редактирование, снятие с продажи.
 /// </summary>
 /// <param name="productService">Сервис товаров</param>
 [ApiController]
 [Route("api/v1/products")]
 public class ProductsController(IProductService productService) : ControllerBase
 {
+    /// <summary>
+    /// Каталог товаров с поиском, фильтрами, сортировкой и пагинацией.
+    /// </summary>
+    /// <param name="query">Параметры каталога из строки запроса</param>
+    [HttpGet]
+    [ProducesResponseType<PagedResult<ProductDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<ProductDto>>> GetCatalog([FromQuery] ProductQueryDto query) =>
+        Ok(await productService.GetCatalog(query));
+
     /// <summary>
     /// Возвращает товар по идентификатору.
     /// </summary>
