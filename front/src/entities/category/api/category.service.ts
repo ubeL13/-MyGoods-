@@ -8,20 +8,8 @@ import {
   mapCategoryDto,
   toCategoryRequest,
 } from './category.mapper'
-import {
-  createCategoryMock,
-  deleteCategoryMock,
-  getCategoriesMock,
-  updateCategoryMock,
-} from './category.mock'
-
-const USE_CATEGORIES_MOCK = true
 
 export async function getCategories(): Promise<TCategory[]> {
-  if (USE_CATEGORIES_MOCK) {
-    return getCategoriesMock()
-  }
-
   const { data } = await apiClient.get<TCategoryDto[]>(
     API_ENDPOINTS.categories.list,
   )
@@ -32,10 +20,6 @@ export async function getCategories(): Promise<TCategory[]> {
 export async function createCategory(
   values: TCategoryFormValues,
 ): Promise<TCategory> {
-  if (USE_CATEGORIES_MOCK) {
-    return createCategoryMock(values)
-  }
-
   const { data } = await apiClient.post<TCategoryDto>(
     API_ENDPOINTS.categories.list,
     toCategoryRequest(values),
@@ -48,10 +32,6 @@ export async function updateCategory(
   categoryId: string,
   values: TCategoryFormValues,
 ): Promise<TCategory> {
-  if (USE_CATEGORIES_MOCK) {
-    return updateCategoryMock(categoryId, values)
-  }
-
   const { data } = await apiClient.put<TCategoryDto>(
     API_ENDPOINTS.categories.byId(categoryId),
     toCategoryRequest(values),
@@ -61,9 +41,5 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(categoryId: string): Promise<void> {
-  if (USE_CATEGORIES_MOCK) {
-    return deleteCategoryMock(categoryId)
-  }
-
   await apiClient.delete(API_ENDPOINTS.categories.byId(categoryId))
 }

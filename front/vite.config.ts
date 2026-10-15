@@ -1,14 +1,8 @@
-import dns from 'node:dns'
 import path from 'node:path'
 
 import babel from '@rolldown/plugin-babel'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-
-// На Windows localhost может резолвиться сначала в ::1, и dev-сервер слушает только IPv6,
-// а браузер подключается по 127.0.0.1. Просим Node сначала отдавать IPv4.
-// https://vite.dev/config/server-options#server-host
-dns.setDefaultResultOrder('ipv4first')
 
 // https://vite.dev/config/
 export default defineConfig({
