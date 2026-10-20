@@ -81,18 +81,56 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
         });
         
-        /*
         modelBuilder.Entity<Customer>(entity =>
-        {   
+        {
+            entity.HasKey(c => c.Id);
+
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(200);
+            entity.Property(c => c.Phone).IsRequired().HasMaxLength(20);
+            entity.Property(c => c.Email).HasMaxLength(150);
+            entity.Property(c => c.Address).HasMaxLength(500);
+
+            // Индекс на телефон для быстрого поиска клиента
+            entity.HasIndex(c => c.Phone);
+            
+            // Нельзя удалить клиента, пока в базе есть связанные заказы
+            entity.HasMany(c => c.Orders)
+                .WithOne(o => o.Customer)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
+
         modelBuilder.Entity<Order>(entity =>
         {
+            entity.HasKey(o => o.Id);
+
+            entity.Property(o => o.DeliveryAddress).IsRequired().HasMaxLength(500);
+            entity.Property(o => o.TotalAmount).HasPrecision(18, 2);
+
+            // Индекс по покупателю и дате
+            entity.HasIndex(o => new { o.CustomerId, o.CreatedAt });
+
+            // При удалении заказа удаляются и его позиции
+            entity.HasMany(o => o.Items)
+                .WithOne(i => i.Order)
+                .HasForeignKey(i => i.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
+            entity.HasKey(oi => oi.Id);
+            
+            entity.Property(oi => oi.PriceAtOrder).HasPrecision(18, 2);
+
+            // Нельзя удалить товар из каталога, если он уже присутствует в оформленных заказах
+            entity.HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Один и тот же товар не должен встречаться в одном заказе дважды отдельными строками
+            entity.HasIndex(oi => new { oi.OrderId, oi.ProductId }).IsUnique();
         });
-        
-        */
     }
 }
