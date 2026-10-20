@@ -25,6 +25,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RemainingProduct> RemainingProducts => Set<RemainingProduct>();
 
     /// <summary>
+    /// Покупатели.
+    /// </summary>
+    public DbSet<Customer> Customers => Set<Customer>();
+
+    /// <summary>
+    /// Заказы.
+    /// </summary>
+    public DbSet<Order> Orders => Set<Order>();
+
+    /// <summary>
+    /// Позиции заказов.
+    /// </summary>
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        
+    /// <summary>
     /// Настройка модели: ключи, обязательные поля, связи.
     /// </summary>
     /// <param name="modelBuilder">Построитель модели EF Core</param>
@@ -65,5 +80,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey<RemainingProduct>(r => r.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        /*
+        modelBuilder.Entity<Customer>(entity =>
+        {   
+        });
+        modelBuilder.Entity<Order>(entity =>
+        {
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+        });
+        
+        */
     }
 }
