@@ -7,6 +7,9 @@ public class Order
 {
     /// <summary>Идентификатор заказа.</summary>
     public Guid Id { get; set; }
+    
+    /// <summary>Человекочитаемый номер заказа (например, 1024).</summary>
+    public int Number { get; set; }
 
     /// <summary>Идентификатор покупателя.</summary>
     public Guid CustomerId { get; set; }

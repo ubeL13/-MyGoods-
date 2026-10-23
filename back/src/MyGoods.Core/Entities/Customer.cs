@@ -22,7 +22,7 @@ public class Customer
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>Дата и время последнего изменения (UTC).</summary>
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     /// <summary>Коллекция заказов клиента.</summary>
     public ICollection<Order> Orders { get; set; } = new List<Order>();

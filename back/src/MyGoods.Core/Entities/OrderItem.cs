@@ -18,21 +18,8 @@ public class OrderItem
     /// <summary>Товар.</summary>
     public Product? Product { get; set; }
 
-    private int _quantity;
-
-    /// <summary>Количество товара в заказе (должно быть больше 0).</summary>
-    public int Quantity
-    {
-        get => _quantity;
-        set
-        {
-            if (value <= 0)
-            {
-                throw new ArgumentException("Количество должно быть больше нуля.", nameof(value));
-            }
-            _quantity = value;
-        }
-    }
+    /// <summary>Количество товара в заказе.</summary>
+    public int Quantity { get; set; }
 
     /// <summary>Цена за единицу товара на момент оформления заказа.</summary>
     public decimal PriceAtOrder { get; set; }

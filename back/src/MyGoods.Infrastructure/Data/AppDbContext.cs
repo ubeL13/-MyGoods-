@@ -91,7 +91,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(c => c.Address).HasMaxLength(500);
 
             // Индекс на телефон для быстрого поиска клиента
-            entity.HasIndex(c => c.Phone);
+            entity.HasIndex(c => c.Phone).IsUnique();
             
             // Нельзя удалить клиента, пока в базе есть связанные заказы
             entity.HasMany(c => c.Orders)
@@ -104,8 +104,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(o => o.Id);
 
+            // Номер заказа генерируется базой автоматически
+            entity.Property(o => o.Number).UseIdentityAlwaysColumn();
+            entity.HasIndex(o => o.Number).IsUnique();
+
             entity.Property(o => o.DeliveryAddress).IsRequired().HasMaxLength(500);
-            entity.Property(o => o.TotalAmount).HasPrecision(18, 2);
+            entity.Property(o => o.TotalAmount).HasPrecision(12, 2);
 
             // Индекс по покупателю и дате
             entity.HasIndex(o => new { o.CustomerId, o.CreatedAt });
@@ -121,7 +125,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(oi => oi.Id);
             
-            entity.Property(oi => oi.PriceAtOrder).HasPrecision(18, 2);
+            entity.Property(oi => oi.PriceAtOrder).HasPrecision(12, 2);
 
             // Нельзя удалить товар из каталога, если он уже присутствует в оформленных заказах
             entity.HasOne(oi => oi.Product)
