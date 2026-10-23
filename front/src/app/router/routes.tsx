@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import {
   CategoriesPageLazy,
   NotFoundPageLazy,
+  OrderCreatePageLazy,
   ProductCreatePageLazy,
   ProductDetailPageLazy,
   ProductEditPageLazy,
@@ -73,6 +74,14 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <CategoriesPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.orderCreate,
+            element: (
+              <PageSuspense>
+                <OrderCreatePageLazy />
               </PageSuspense>
             ),
           },
