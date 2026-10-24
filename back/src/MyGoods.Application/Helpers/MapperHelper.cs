@@ -39,6 +39,7 @@ public static class MapperHelper
     public static OrderDto ToDto(Order order) =>
         new(
             order.Id,
+            order.Number,
             order.CustomerId,
             order.Customer?.Name,
             order.Customer?.Phone,
