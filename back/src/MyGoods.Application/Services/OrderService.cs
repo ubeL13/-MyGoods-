@@ -89,7 +89,8 @@ public class OrderService(
             Email = string.IsNullOrWhiteSpace(dto.NewCustomer.Email) ? null : dto.NewCustomer.Email.Trim(),
             // Адрес доставки первого заказа запоминаем как адрес покупателя
             Address = dto.DeliveryAddress.Trim(),
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
     }
 }

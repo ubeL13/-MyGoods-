@@ -4,6 +4,7 @@ namespace MyGoods.Dto.Orders;
 /// Заказ в ответе API.
 /// </summary>
 /// <param name="Id">Идентификатор заказа</param>
+/// <param name="Number">Номер заказа (1, 2, 3… — выдаёт база)</param>
 /// <param name="CustomerId">Идентификатор покупателя</param>
 /// <param name="CustomerName">Имя покупателя</param>
 /// <param name="CustomerPhone">Телефон покупателя</param>
@@ -15,6 +16,7 @@ namespace MyGoods.Dto.Orders;
 /// <param name="Items">Позиции заказа</param>
 public record OrderDto(
     Guid Id,
+    int Number,
     Guid CustomerId,
     string? CustomerName,
     string? CustomerPhone,
