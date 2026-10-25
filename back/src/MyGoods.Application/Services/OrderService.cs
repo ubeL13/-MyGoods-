@@ -93,4 +93,48 @@ public class OrderService(
             UpdatedAt = DateTime.UtcNow
         };
     }
+
+    /// <summary>
+    /// Разрешённые переходы статусов: из какого статуса в какие можно перевести заказ.
+    /// Всё, чего нет в таблице, запрещено.
+    /// </summary>
+    private static readonly Dictionary<OrderStatus, OrderStatus[]> AllowedTransitions = new()
+    {
+        [OrderStatus.New] = [OrderStatus.Confirmed],
+        [OrderStatus.Confirmed] = [OrderStatus.Assembled],
+        [OrderStatus.Assembled] = [OrderStatus.Shipped],
+    };
+
+    /// <inheritdoc />
+    public async Task<OrderDto> ChangeStatus(Guid id, OrderStatusChangeDto dto)
+    {
+        var order = await orderRepository.Read(id)
+            ?? throw new NotFoundException($"Заказ с id {id} не найден.");
+
+        var newStatus = Enum.Parse<OrderStatus>(dto.Status!);
+        var allowed = AllowedTransitions.GetValueOrDefault(order.Status, []);
+
+        if (!allowed.Contains(newStatus))
+            throw new ConflictException(
+                $"Нельзя перевести заказ №{order.Number} из статуса «{StatusName(order.Status)}» в «{StatusName(newStatus)}».");
+
+        order.ChangeStatus(newStatus);
+
+        await orderRepository.Update(order);
+        return MapperHelper.ToDto(order);
+    }
+
+    /// <summary>
+    /// Название статуса по-русски — для понятных сообщений об ошибках.
+    /// </summary>
+    private static string StatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.New => "Новый",
+        OrderStatus.Confirmed => "Подтверждён",
+        OrderStatus.Assembled => "Собран",
+        OrderStatus.Shipped => "Отправлен",
+        OrderStatus.Delivered => "Доставлен",
+        OrderStatus.Cancelled => "Отменён",
+        _ => status.ToString()
+    };
 }
