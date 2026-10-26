@@ -1,3 +1,5 @@
+import type { TPaginationParams } from '@/shared/api'
+
 export type TOrderStatus =
   | 'New'
   | 'Confirmed'
@@ -17,6 +19,7 @@ export type TOrderItem = {
 
 export type TOrder = {
   id: string
+  number: number
   customerId: string
   customerName: string
   customerPhone: string
@@ -27,6 +30,24 @@ export type TOrder = {
   updatedAt: string
   items: TOrderItem[]
 }
+
+export type TOrderListItem = {
+  id: string
+  number: number
+  customerName: string
+  customerPhone: string
+  status: TOrderStatus
+  totalAmount: number
+  itemsCount: number
+  createdAt: string
+}
+
+export type TOrdersFilters = {
+  status?: TOrderStatus
+  search?: string
+}
+
+export type TOrdersQuery = TPaginationParams & TOrdersFilters
 
 export type TOrderNewCustomer = {
   name: string
