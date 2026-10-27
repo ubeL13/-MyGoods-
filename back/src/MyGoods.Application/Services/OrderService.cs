@@ -58,9 +58,29 @@ public class OrderService(
 
         order.RecalculateTotal();
 
-        await orderRepository.Create(order);
+        // Товар резервируется в момент создания заказа, чтобы его нельзя было продать во второй заказ
+        var notEnough = await orderRepository.CreateWithReservation(order);
+        if (notEnough.Count > 0)
+            throw new ConflictException(
+                $"Не хватает товара для заказа. {DescribeShortage(order, notEnough)}.");
+
         return MapperHelper.ToDto(order);
     }
+
+    /// <summary>
+    /// Текст о нехватке: сколько нужно, сколько доступно и сколько уже в других заказах.
+    /// </summary>
+    /// <param name="order">Заказ</param>
+    /// <param name="productIds">Товары, которых не хватило</param>
+    private static string DescribeShortage(Order order, List<Guid> productIds) =>
+        string.Join("; ", order.Items
+            .Where(i => productIds.Contains(i.ProductId))
+            .Select(i =>
+            {
+                var stock = i.Product?.RemainingProduct;
+                return $"«{i.Product?.Name}»: нужно {i.Quantity}, доступно {stock?.Available ?? 0}"
+                       + (stock?.Reserved > 0 ? $" ({stock.Reserved} шт. уже в других заказах)" : "");
+            }));
 
     /// <summary>
     /// Возвращает существующего покупателя или создаёт нового (он сохранится вместе с заказом).
@@ -120,7 +140,19 @@ public class OrderService(
 
         order.ChangeStatus(newStatus);
 
-        await orderRepository.Update(order);
+        if (newStatus != OrderStatus.Shipped)
+        {
+            await orderRepository.Update(order);
+            return MapperHelper.ToDto(order);
+        }
+
+        // Отправка: товар уходит со склада и снимается его резерв — вместе со сменой статуса
+        // в одной транзакции, либо всё, либо ничего
+        var failed = await orderRepository.SaveShipped(order);
+        if (failed.Count > 0)
+            throw new ConflictException(
+                $"Нельзя отправить заказ №{order.Number}: товар не зарезервирован на складе. {DescribeShortage(order, failed)}.");
+
         return MapperHelper.ToDto(order);
     }
 
