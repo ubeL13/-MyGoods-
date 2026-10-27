@@ -1,4 +1,4 @@
-export { createOrder, getOrders } from './api/order.service'
+export { createOrder, getOrderById, getOrders } from './api/order.service'
 export { ORDER_STATUS_VIEW, ORDER_STATUSES } from './lib/orderStatus'
 export type {
   TOrder,
@@ -10,4 +10,5 @@ export type {
   TOrdersQuery,
   TOrderStatus,
 } from './model/order.types'
+export { useOrderDetail } from './model/useOrderDetail'
 export { OrderStatusTag } from './ui/OrderStatusTag'

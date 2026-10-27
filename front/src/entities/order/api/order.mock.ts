@@ -1,26 +1,61 @@
+import { AxiosError, AxiosHeaders } from 'axios'
+
 import type {
+  TOrderDto,
   TOrderListItemDto,
   TOrdersPageDto,
   TOrdersQueryDto,
 } from './order.dto'
 
-function pick<T>(list: readonly [T, ...T[]], index: number): T {
+type TNonEmpty<T> = [T, ...T[]]
+
+function pick<T>(list: TNonEmpty<T>, index: number): T {
   return list[index % list.length] ?? list[0]
 }
 
-const CUSTOMERS: [
-  { name: string; phone: string },
-  ...{ name: string; phone: string }[],
-] = [
-  { name: 'Иван Петров', phone: '79991234567' },
-  { name: 'ООО «Ромашка»', phone: '79270001122' },
-  { name: 'Анна Смирнова', phone: '79375554433' },
-  { name: 'ИП Козлов А. В.', phone: '79171112233' },
-  { name: 'Мария Иванова', phone: '79053334455' },
-  { name: 'ООО «Вектор»', phone: '78462009090' },
+const CUSTOMERS: TNonEmpty<{ name: string; phone: string; address: string }> = [
+  {
+    name: 'Иван Петров',
+    phone: '79991234567',
+    address: 'Самара, ул. Ленина, 10, кв. 5',
+  },
+  {
+    name: 'ООО «Ромашка»',
+    phone: '79270001122',
+    address: 'Самара, Московское ш., 4, офис 12',
+  },
+  {
+    name: 'Анна Смирнова',
+    phone: '79375554433',
+    address: 'Тольятти, ул. Мира, 21',
+  },
+  {
+    name: 'ИП Козлов А. В.',
+    phone: '79171112233',
+    address: 'Самара, ул. Гагарина, 88',
+  },
+  {
+    name: 'Мария Иванова',
+    phone: '79053334455',
+    address: 'Сызрань, ул. Советская, 3',
+  },
+  {
+    name: 'ООО «Вектор»',
+    phone: '78462009090',
+    address: 'Самара, пр. Кирова, 150, склад 2',
+  },
 ]
 
-const STATUSES: [string, ...string[]] = [
+const PRODUCTS: TNonEmpty<{ sku: string; name: string; price: number }> = [
+  { sku: 'JKT-001', name: 'Ветровка мужская', price: 3490 },
+  { sku: 'TSH-002', name: 'Футболка базовая', price: 990 },
+  { sku: 'HD-003', name: 'Худи оверсайз', price: 2790 },
+  { sku: 'PHN-001', name: 'Смартфон X1', price: 18990 },
+  { sku: 'EAR-004', name: 'Наушники беспроводные', price: 4590 },
+  { sku: 'CBL-010', name: 'Кабель USB-C', price: 490 },
+]
+
+const STATUSES: TNonEmpty<string> = [
   'New',
   'New',
   'Confirmed',
@@ -34,23 +69,69 @@ const STATUSES: [string, ...string[]] = [
 const HOUR = 60 * 60 * 1000
 const LAST_ORDER_DATE = Date.UTC(2026, 9, 27, 9, 30)
 
-const ORDERS_MOCK: TOrderListItemDto[] = Array.from(
-  { length: 27 },
-  (_, index) => {
-    const customer = pick(CUSTOMERS, index)
+const mockId = (prefix: string, index: number) =>
+  `${prefix}-0000-0000-0000-${String(index + 1).padStart(12, '0')}`
+
+const ORDERS_MOCK: TOrderDto[] = Array.from({ length: 27 }, (_, index) => {
+  const customer = pick(CUSTOMERS, index)
+  const status = pick(STATUSES, index)
+  const createdAt = LAST_ORDER_DATE - index * 9 * HOUR
+
+  const items = Array.from({ length: (index % 4) + 1 }, (_, position) => {
+    const productIndex = index + position
+    const product = pick(PRODUCTS, productIndex)
+    const quantity = (productIndex % 3) + 1
 
     return {
-      id: `00000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
-      number: 1027 - index,
-      customerName: customer.name,
-      customerPhone: customer.phone,
-      status: pick(STATUSES, index),
-      totalAmount: ((index * 3170) % 24000) + 1490,
-      itemsCount: (index % 4) + 1,
-      createdAt: new Date(LAST_ORDER_DATE - index * 9 * HOUR).toISOString(),
+      productId: mockId('00000000', productIndex % PRODUCTS.length),
+      sku: product.sku,
+      productName: product.name,
+      quantity,
+      price: product.price,
+      sum: product.price * quantity,
     }
-  },
-)
+  })
+
+  return {
+    id: mockId('11111111', index),
+    number: 1027 - index,
+    customerId: mockId('22222222', index % CUSTOMERS.length),
+    customerName: customer.name,
+    customerPhone: customer.phone,
+    status,
+    deliveryAddress: customer.address,
+    totalAmount: items.reduce((sum, item) => sum + item.sum, 0),
+    createdAt: new Date(createdAt).toISOString(),
+    updatedAt:
+      status === 'New' ? null : new Date(createdAt + 5 * HOUR).toISOString(),
+    items,
+  }
+})
+
+function toListItem(order: TOrderDto): TOrderListItemDto {
+  return {
+    id: order.id,
+    number: order.number,
+    customerName: order.customerName,
+    customerPhone: order.customerPhone,
+    status: order.status,
+    totalAmount: order.totalAmount,
+    itemsCount: order.items.length,
+    createdAt: order.createdAt,
+  }
+}
+
+function withDelay<T>(getValue: () => T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(getValue())
+      } catch (error) {
+        reject(error)
+      }
+    }, 300)
+  })
+}
 
 export function getOrdersMock(query: TOrdersQueryDto): Promise<TOrdersPageDto> {
   const search = query.search?.toLowerCase() ?? ''
@@ -70,19 +151,34 @@ export function getOrdersMock(query: TOrdersQueryDto): Promise<TOrdersPageDto> {
 
   const start = (query.page - 1) * query.limit
 
-  return new Promise((resolve) => {
-    setTimeout(
-      () =>
-        resolve({
-          data: found.slice(start, start + query.limit),
-          meta: {
-            page: query.page,
-            limit: query.limit,
-            total: found.length,
-            totalPages: Math.ceil(found.length / query.limit),
-          },
-        }),
-      300,
+  return withDelay(() => ({
+    data: found.slice(start, start + query.limit).map(toListItem),
+    meta: {
+      page: query.page,
+      limit: query.limit,
+      total: found.length,
+      totalPages: Math.ceil(found.length / query.limit),
+    },
+  }))
+}
+
+export function getOrderByIdMock(orderId: string): Promise<TOrderDto> {
+  return withDelay(() => {
+    const order = ORDERS_MOCK.find((item) => item.id === orderId)
+    if (order) return order
+
+    throw new AxiosError(
+      'Not Found',
+      AxiosError.ERR_BAD_REQUEST,
+      undefined,
+      undefined,
+      {
+        status: 404,
+        statusText: 'Not Found',
+        data: { title: 'Заказ не найден' },
+        headers: {},
+        config: { headers: new AxiosHeaders() },
+      },
     )
   })
 }

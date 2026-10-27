@@ -12,6 +12,7 @@ export const APP_ROUTES = {
     `${ADMIN}/products/${productId}/edit`,
   categories: `${ADMIN}/categories`,
   orders: `${ADMIN}/orders`,
+  orderDetail: (orderId: string) => `${ADMIN}/orders/${orderId}`,
   orderCreate: `${ADMIN}/orders/create`,
 } as const
 
@@ -22,6 +23,7 @@ export const ROUTE_SEGMENTS = {
   productEdit: 'products/:productId/edit',
   categories: 'categories',
   orders: 'orders',
+  orderDetail: 'orders/:orderId',
   orderCreate: 'orders/create',
 } as const
 
