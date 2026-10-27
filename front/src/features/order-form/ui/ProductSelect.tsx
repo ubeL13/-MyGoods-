@@ -49,7 +49,7 @@ export function ProductSelect({
         label: `${product.name} · ${product.sku} · ${formatPrice(product.price)}`,
         disabled:
           !product.isActive ||
-          product.quantity === 0 ||
+          product.available <= 0 ||
           (product.id !== value && takenIds.includes(product.id)),
       }))}
     />

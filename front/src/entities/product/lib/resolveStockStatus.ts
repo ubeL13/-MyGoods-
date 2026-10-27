@@ -1,10 +1,10 @@
 import type { TStockStatus } from '../model/product.types'
 
 export function resolveStockStatus(
-  quantity: number,
+  available: number,
   min: number,
 ): TStockStatus {
-  if (quantity <= 0) return 'OutOfStock'
-  if (quantity <= min) return 'LowStock'
+  if (available <= 0) return 'OutOfStock'
+  if (available <= min) return 'LowStock'
   return 'InStock'
 }
