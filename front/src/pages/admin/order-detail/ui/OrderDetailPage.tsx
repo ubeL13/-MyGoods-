@@ -17,6 +17,7 @@ import {
   type TOrderItem,
   useOrderDetail,
 } from '@/entities/order'
+import { ChangeOrderStatusButton } from '@/features/order-change-status'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime, formatPhone, formatPrice } from '@/shared/lib'
 
@@ -61,7 +62,8 @@ const columns: TableColumnsType<TOrderItem> = [
 export function OrderDetailPage() {
   const { orderId = '' } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
-  const { order, isLoading, error, isNotFound } = useOrderDetail(orderId)
+  const { order, isLoading, error, isNotFound, replaceOrder } =
+    useOrderDetail(orderId)
 
   if (isNotFound) {
     return (
@@ -103,6 +105,7 @@ export function OrderDetailPage() {
               Заказ №{order.number}
             </Typography.Title>
             <OrderStatusTag status={order.status} />
+            <ChangeOrderStatusButton order={order} onChange={replaceOrder} />
           </Flex>
 
           <Card

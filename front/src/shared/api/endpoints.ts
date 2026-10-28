@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   orders: {
     list: v1('/orders'),
     byId: (orderId: string) => v1(`/orders/${orderId}`),
+    status: (orderId: string) => v1(`/orders/${orderId}/status`),
   },
   customers: {
     list: v1('/customers'),
