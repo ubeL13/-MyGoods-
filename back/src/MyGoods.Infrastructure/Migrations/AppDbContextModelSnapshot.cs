@@ -224,12 +224,18 @@ namespace MyGoods.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Reserved")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("RemainingProducts");
+                    b.ToTable("RemainingProducts", t =>
+                        {
+                            t.HasCheckConstraint("CK_RemainingProducts_Reserved", "\"Reserved\" >= 0 AND \"Reserved\" <= \"Quantity\"");
+                        });
                 });
 
             modelBuilder.Entity("MyGoods.Core.Entities.Category", b =>
