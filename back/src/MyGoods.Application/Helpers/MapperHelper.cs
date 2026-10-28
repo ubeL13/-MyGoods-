@@ -1,4 +1,5 @@
 using MyGoods.Core.Entities;
+using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
 
 namespace MyGoods.Application.Helpers;
@@ -31,4 +32,33 @@ public static class MapperHelper
     /// </summary>
     public static StockDto ToDto(RemainingProduct stock) =>
         new(stock.Quantity, stock.Min, stock.Status.ToString());
+
+    /// <summary>
+    /// Заказ → OrderDto.
+    /// </summary>
+    public static OrderDto ToDto(Order order) =>
+        new(
+            order.Id,
+            order.Number,
+            order.CustomerId,
+            order.Customer?.Name,
+            order.Customer?.Phone,
+            order.Status.ToString(),
+            order.DeliveryAddress,
+            order.TotalAmount,
+            order.CreatedAt,
+            order.UpdatedAt,
+            order.Items.Select(ToDto).ToList());
+
+    /// <summary>
+    /// Позиция заказа → OrderItemDto.
+    /// </summary>
+    public static OrderItemDto ToDto(OrderItem item) =>
+        new(
+            item.ProductId,
+            item.Product?.Sku,
+            item.Product?.Name,
+            item.Quantity,
+            item.PriceAtOrder,
+            item.PriceAtOrder * item.Quantity);
 }
