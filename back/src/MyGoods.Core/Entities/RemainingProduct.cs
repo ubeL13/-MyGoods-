@@ -33,11 +33,22 @@ public class RemainingProduct
     public int Min { get; set; }
 
     /// <summary>
-    /// Статус остатка. Не хранится в базе — всегда вычисляется из Quantity и Min,
+    /// Зарезервировано в заказах, которые ещё не отправлены. Физически товар на складе,
+    /// но продать его в другой заказ уже нельзя.
+    /// </summary>
+    public int Reserved { get; set; }
+
+    /// <summary>
+    /// Доступно к заказу: на складе минус зарезервировано. Не хранится в базе — вычисляется.
+    /// </summary>
+    public int Available => Quantity - Reserved;
+
+    /// <summary>
+    /// Статус остатка по доступному к заказу количеству. Не хранится в базе — всегда вычисляется,
     /// поэтому не может разойтись с количеством.
     /// </summary>
     public StockStatus Status =>
-        Quantity <= 0 ? StockStatus.OutOfStock
-        : Quantity <= Min ? StockStatus.LessMinimum
+        Available <= 0 ? StockStatus.OutOfStock
+        : Available <= Min ? StockStatus.LessMinimum
         : StockStatus.Available;
 }
