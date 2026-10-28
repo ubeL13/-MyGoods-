@@ -13,4 +13,13 @@ public interface IOrderService
     /// <param name="dto">Данные заказа</param>
     /// <returns>Созданный заказ</returns>
     Task<OrderDto> Create(OrderCreateDto dto);
+
+    /// <summary>
+    /// Меняет статус заказа, если такой переход разрешён (например, «Новый» → «Подтверждён»).
+    /// Заказа нет — NotFoundException (404); переход запрещён — ConflictException (409).
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    /// <param name="dto">Новый статус</param>
+    /// <returns>Заказ с новым статусом</returns>
+    Task<OrderDto> ChangeStatus(Guid id, OrderStatusChangeDto dto);
 }

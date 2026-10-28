@@ -26,4 +26,18 @@ public class OrdersController(IOrderService orderService) : ControllerBase
         var order = await orderService.Create(dto);
         return Created($"/api/v1/orders/{order.Id}", order);
     }
+
+    /// <summary>
+    /// Меняет статус заказа (кладовщик): «Новый» → «Подтверждён» → «Собран» → «Отправлен».
+    /// Недопустимый переход (например, сразу из «Нового» в «Отправлен») — 409.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    /// <param name="dto">Новый статус, например {"status": "Confirmed"}</param>
+    [HttpPatch("{id:guid}/status")]
+    [ProducesResponseType<OrderDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<OrderDto>> ChangeStatus(Guid id, OrderStatusChangeDto dto) =>
+        Ok(await orderService.ChangeStatus(id, dto));
 }
