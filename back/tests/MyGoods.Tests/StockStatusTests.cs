@@ -24,4 +24,19 @@ public class StockStatusTests
 
         Assert.Equal(expected, stock.Status);
     }
+
+    /// <summary>
+    /// Статус считается по доступному количеству: зарезервированный товар продать нельзя.
+    /// </summary>
+    [Theory]
+    [InlineData(5, 5, 1, StockStatus.OutOfStock)]
+    [InlineData(5, 3, 2, StockStatus.LessMinimum)]
+    [InlineData(10, 2, 2, StockStatus.Available)]
+    public void Status_UsesAvailableQuantity(int quantity, int reserved, int min, StockStatus expected)
+    {
+        var stock = new RemainingProduct { Quantity = quantity, Reserved = reserved, Min = min };
+
+        Assert.Equal(quantity - reserved, stock.Available);
+        Assert.Equal(expected, stock.Status);
+    }
 }
