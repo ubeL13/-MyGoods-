@@ -68,7 +68,7 @@ export function mapProductsQuery(query: TProductsQuery): TProductQueryDto {
     minPrice: query.priceFrom,
     maxPrice: query.priceTo,
     inStock: query.inStock,
-    lowStock: query.lowStock,
+    belowMin: query.belowMin,
     sortBy: query.sortBy,
     sortOrder: query.sortOrder,
     page: query.page,

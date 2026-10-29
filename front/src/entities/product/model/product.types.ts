@@ -22,7 +22,7 @@ export type TProductsFilters = {
   priceFrom?: number
   priceTo?: number
   inStock?: boolean
-  lowStock?: boolean
+  belowMin?: boolean
   sortBy?: TProductsSortBy
   sortOrder?: 'asc' | 'desc'
 }

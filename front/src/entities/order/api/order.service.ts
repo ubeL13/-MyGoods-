@@ -8,24 +8,24 @@ import type {
   TOrderStatus,
 } from '../model/order.types'
 
-import type { TOrderDto } from './order.dto'
+import type { TOrderDto, TOrdersPageDto } from './order.dto'
 import { mapOrderDto, mapOrdersPageDto, mapOrdersQuery } from './order.mapper'
-import {
-  changeOrderStatusMock,
-  getOrderByIdMock,
-  getOrdersMock,
-} from './order.mock'
 
 export async function getOrders(
   query: TOrdersQuery,
 ): Promise<TPaginatedResponse<TOrderListItem>> {
-  const data = await getOrdersMock(mapOrdersQuery(query))
+  const { data } = await apiClient.get<TOrdersPageDto>(
+    API_ENDPOINTS.orders.list,
+    { params: mapOrdersQuery(query) },
+  )
 
   return mapOrdersPageDto(data)
 }
 
 export async function getOrderById(orderId: string): Promise<TOrder> {
-  const data = await getOrderByIdMock(orderId)
+  const { data } = await apiClient.get<TOrderDto>(
+    API_ENDPOINTS.orders.byId(orderId),
+  )
 
   return mapOrderDto(data)
 }
@@ -34,7 +34,10 @@ export async function changeOrderStatus(
   orderId: string,
   status: TOrderStatus,
 ): Promise<TOrder> {
-  const data = await changeOrderStatusMock(orderId, status)
+  const { data } = await apiClient.patch<TOrderDto>(
+    API_ENDPOINTS.orders.status(orderId),
+    { status },
+  )
 
   return mapOrderDto(data)
 }

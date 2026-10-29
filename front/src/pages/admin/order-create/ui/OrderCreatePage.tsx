@@ -30,10 +30,13 @@ export function OrderCreatePage() {
         subTitle={`${createdOrder.customerName}, сумма ${formatPrice(createdOrder.totalAmount)}`}
         extra={[
           <Button
-            key="list"
+            key="open"
             type="primary"
-            onClick={() => navigate(APP_ROUTES.orders)}
+            onClick={() => navigate(APP_ROUTES.orderDetail(createdOrder.id))}
           >
+            Открыть заказ
+          </Button>,
+          <Button key="list" onClick={() => navigate(APP_ROUTES.orders)}>
             К списку заказов
           </Button>,
           <Button key="more" onClick={() => setCreatedOrder(undefined)}>

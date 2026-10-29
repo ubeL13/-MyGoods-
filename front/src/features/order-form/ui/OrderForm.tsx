@@ -24,7 +24,7 @@ import { ProductSelect } from './ProductSelect'
 import styles from './orderForm.module.css'
 
 const INITIAL_VALUES: Partial<TOrderFormValues> = {
-  customerMode: 'new',
+  customerMode: 'existing',
   items: [{ quantity: 1 }],
 }
 
@@ -122,11 +122,7 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
         <Form.Item<TOrderFormValues> name="customerMode">
           <Segmented
             options={[
-              {
-                label: 'Выбрать существующего',
-                value: 'existing',
-                disabled: true,
-              },
+              { label: 'Выбрать существующего', value: 'existing' },
               { label: 'Новый покупатель', value: 'new' },
             ]}
           />
