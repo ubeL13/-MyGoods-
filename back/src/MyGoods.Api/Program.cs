@@ -65,6 +65,9 @@ if (app.Environment.IsDevelopment())
         // Запускаем заполнение данных (асинхронно)
         await CategoryDataSeeder.SeedAsync(db);
         await ProductDataSeeder.SeedAsync(db);
+        
+        await CustomerDataSeeder.SeedAsync(db);
+        await OrderDataSeeder.SeedAsync(db);
     }
 }
 
