@@ -30,6 +30,12 @@ export const CategoriesPageLazy = lazy(() =>
   })),
 )
 
+export const OrderCreatePageLazy = lazy(() =>
+  import('@/pages/admin/order-create').then((module) => ({
+    default: module.OrderCreatePage,
+  })),
+)
+
 export const NotFoundPageLazy = lazy(() =>
   import('@/pages/not-found').then((module) => ({
     default: module.NotFoundPage,
