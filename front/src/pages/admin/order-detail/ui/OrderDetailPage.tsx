@@ -17,7 +17,7 @@ import {
   type TOrderItem,
   useOrderDetail,
 } from '@/entities/order'
-import { ChangeOrderStatusButton } from '@/features/order-change-status'
+import { OrderStatusActions } from '@/features/order-change-status'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime, formatPhone, formatPrice } from '@/shared/lib'
 
@@ -105,7 +105,7 @@ export function OrderDetailPage() {
               Заказ №{order.number}
             </Typography.Title>
             <OrderStatusTag status={order.status} />
-            <ChangeOrderStatusButton order={order} onChange={replaceOrder} />
+            <OrderStatusActions order={order} onChange={replaceOrder} />
           </Flex>
 
           <Card
