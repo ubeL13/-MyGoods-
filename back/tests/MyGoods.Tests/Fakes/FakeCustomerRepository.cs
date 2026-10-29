@@ -37,4 +37,10 @@ public class FakeCustomerRepository : ICustomerRepository
 
     /// <inheritdoc />
     public Task<bool> PhoneExists(string phone) => Task.FromResult(Customers.Any(c => c.Phone == phone));
+
+    /// <inheritdoc />
+    public Task<(List<Customer> Items, int Total)> Search(string? search, int page, int limit)
+    {
+        return Task.FromResult((new List<Customer>(), 0));
+    }
 }

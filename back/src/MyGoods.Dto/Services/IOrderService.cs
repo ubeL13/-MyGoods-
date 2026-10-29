@@ -8,6 +8,18 @@ namespace MyGoods.Dto.Services;
 public interface IOrderService
 {
     /// <summary>
+    /// Список заказов с фильтром по статусу, поиском и пагинацией; новые сверху.
+    /// </summary>
+    /// <param name="query">Параметры списка</param>
+    Task<PagedResult<OrderListItemDto>> GetList(OrderQueryDto query);
+
+    /// <summary>
+    /// Заказ по идентификатору — с покупателем и позициями. Если нет — NotFoundException (404).
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    Task<OrderDto> GetById(Guid id);
+    
+    /// <summary>
     /// Создаёт заказ в статусе «Новый». Цена каждой позиции фиксируется на момент создания.
     /// </summary>
     /// <param name="dto">Данные заказа</param>
