@@ -9,7 +9,7 @@ import type {
 
 import type { TOrderDto } from './order.dto'
 import { mapOrderDto, mapOrdersPageDto, mapOrdersQuery } from './order.mapper'
-import { getOrdersMock } from './order.mock'
+import { getOrderByIdMock, getOrdersMock } from './order.mock'
 
 export async function getOrders(
   query: TOrdersQuery,
@@ -17,6 +17,12 @@ export async function getOrders(
   const data = await getOrdersMock(mapOrdersQuery(query))
 
   return mapOrdersPageDto(data)
+}
+
+export async function getOrderById(orderId: string): Promise<TOrder> {
+  const data = await getOrderByIdMock(orderId)
+
+  return mapOrderDto(data)
 }
 
 export async function createOrder(values: TOrderCreateValues): Promise<TOrder> {

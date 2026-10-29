@@ -36,6 +36,12 @@ export const OrdersPageLazy = lazy(() =>
   })),
 )
 
+export const OrderDetailPageLazy = lazy(() =>
+  import('@/pages/admin/order-detail').then((module) => ({
+    default: module.OrderDetailPage,
+  })),
+)
+
 export const OrderCreatePageLazy = lazy(() =>
   import('@/pages/admin/order-create').then((module) => ({
     default: module.OrderCreatePage,

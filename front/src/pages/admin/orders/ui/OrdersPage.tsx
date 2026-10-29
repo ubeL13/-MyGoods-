@@ -1,6 +1,6 @@
 import type { TableColumnsType } from 'antd'
 import { Alert, Button, Flex, Input, Table, Tabs, Typography } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import {
   ORDER_STATUS_VIEW,
@@ -10,7 +10,7 @@ import {
   type TOrderStatus,
 } from '@/entities/order'
 import { APP_ROUTES } from '@/shared/config/routes'
-import { formatDateTime, formatPrice } from '@/shared/lib'
+import { formatDateTime, formatPhone, formatPrice } from '@/shared/lib'
 
 import { useOrdersPage } from '../model/useOrdersPage'
 
@@ -33,6 +33,9 @@ const columns: TableColumnsType<TOrderListItem> = [
     title: '№',
     dataIndex: 'number',
     width: 90,
+    render: (number: number, order) => (
+      <Link to={APP_ROUTES.orderDetail(order.id)}>{number}</Link>
+    ),
   },
   {
     title: 'Дата',
@@ -47,7 +50,7 @@ const columns: TableColumnsType<TOrderListItem> = [
       <>
         <div>{name}</div>
         <Typography.Text type="secondary">
-          {order.customerPhone}
+          {formatPhone(order.customerPhone)}
         </Typography.Text>
       </>
     ),
