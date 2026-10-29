@@ -8,7 +8,7 @@ export const DEFAULT_PAGE_SIZE = 20
 
 export type TWarehouseFilters = {
   search?: string
-  lowStock?: boolean
+  belowMin?: boolean
 }
 
 type TLoadResult = {

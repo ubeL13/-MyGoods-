@@ -108,9 +108,9 @@ export function WarehousePage() {
         />
         <Flex gap="small" align="center">
           <Switch
-            checked={filters.lowStock ?? false}
-            onChange={(lowStock) =>
-              changeFilters({ ...filters, lowStock: lowStock || undefined })
+            checked={filters.belowMin ?? false}
+            onChange={(belowMin) =>
+              changeFilters({ ...filters, belowMin: belowMin || undefined })
             }
           />
           <span>Только заканчивающиеся</span>

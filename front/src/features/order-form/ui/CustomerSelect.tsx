@@ -2,6 +2,7 @@ import { Select } from 'antd'
 import { useState } from 'react'
 
 import { type TCustomer, useCustomerOptions } from '@/entities/customer'
+import { formatPhone } from '@/shared/lib'
 
 type TCustomerSelectProps = {
   value?: string
@@ -44,7 +45,7 @@ export function CustomerSelect({
       notFoundContent={isLoading ? 'Загрузка…' : 'Покупатель не найден'}
       options={list.map((customer) => ({
         value: customer.id,
-        label: `${customer.name} · ${customer.phone}`,
+        label: `${customer.name} · ${formatPhone(customer.phone)}`,
       }))}
     />
   )

@@ -39,7 +39,7 @@ export type TProductQueryDto = {
   minPrice?: number
   maxPrice?: number
   inStock?: boolean
-  lowStock?: boolean
+  belowMin?: boolean
   sortBy?: string
   sortOrder?: string
   page: number
