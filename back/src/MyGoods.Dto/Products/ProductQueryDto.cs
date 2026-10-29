@@ -63,4 +63,9 @@ public class ProductQueryDto
     /// </summary>
     [Range(1, 100, ErrorMessage = "На странице от 1 до 100 товаров.")]
     public int Limit { get; set; } = 20;
+    
+    /// <summary>
+    /// Показывать только товары, остаток которых не превышает минимальный уровень.
+    /// </summary>
+    public bool BelowMin { get; set; }
 }

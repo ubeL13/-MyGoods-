@@ -54,4 +54,9 @@ public class ProductFilter
     /// Количество товаров на странице.
     /// </summary>
     public int Limit { get; set; } = 20;
+    
+    /// <summary>
+    /// Показывать только товары, остаток которых не превышает минимальный уровень.
+    /// </summary>
+    public bool BelowMinOnly { get; set; }
 }

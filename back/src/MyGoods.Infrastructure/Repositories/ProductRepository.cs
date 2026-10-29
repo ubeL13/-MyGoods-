@@ -94,6 +94,13 @@ public class ProductRepository(AppDbContext dbContext) : Repository<Product>(dbC
 
         if (filter.IsActive.HasValue)
             query = query.Where(p => p.IsActive == filter.IsActive.Value);
+        
+        if (filter.BelowMinOnly)
+        {
+            query = query.Where(p =>
+                p.RemainingProduct != null &&
+                p.RemainingProduct.Quantity - p.RemainingProduct.Reserved <= p.RemainingProduct.Min);
+        }
 
         return query;
     }

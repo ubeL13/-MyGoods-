@@ -30,7 +30,8 @@ public class ProductService(
             SortBy = query.SortBy,
             Descending = query.SortOrder == "desc",
             Page = query.Page,
-            Limit = query.Limit
+            Limit = query.Limit,
+            BelowMinOnly = query.BelowMin
         };
 
         if (query.CategoryId.HasValue)
