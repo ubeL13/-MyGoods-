@@ -3,10 +3,14 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import {
   CategoriesPageLazy,
   NotFoundPageLazy,
+  OrderCreatePageLazy,
+  OrderDetailPageLazy,
+  OrdersPageLazy,
   ProductCreatePageLazy,
   ProductDetailPageLazy,
   ProductEditPageLazy,
   ProductsPageLazy,
+  WarehousePageLazy,
 } from '@/app/router/lazyPages'
 import { PageSuspense } from '@/app/router/PageSuspense'
 import { AdminLayout } from '@/app/ui/AdminLayout'
@@ -73,6 +77,38 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <CategoriesPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.warehouse,
+            element: (
+              <PageSuspense>
+                <WarehousePageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.orders,
+            element: (
+              <PageSuspense>
+                <OrdersPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.orderDetail,
+            element: (
+              <PageSuspense>
+                <OrderDetailPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.orderCreate,
+            element: (
+              <PageSuspense>
+                <OrderCreatePageLazy />
               </PageSuspense>
             ),
           },

@@ -1,0 +1,16 @@
+.order-detail__back {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.order-detail__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.order-detail__title {
+  margin: 0;
+}
+
+.order-detail__card {
+  margin-bottom: var(--spacing-md);
+}

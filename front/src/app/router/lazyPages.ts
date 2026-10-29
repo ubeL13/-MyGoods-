@@ -30,6 +30,30 @@ export const CategoriesPageLazy = lazy(() =>
   })),
 )
 
+export const OrdersPageLazy = lazy(() =>
+  import('@/pages/admin/orders').then((module) => ({
+    default: module.OrdersPage,
+  })),
+)
+
+export const OrderDetailPageLazy = lazy(() =>
+  import('@/pages/admin/order-detail').then((module) => ({
+    default: module.OrderDetailPage,
+  })),
+)
+
+export const OrderCreatePageLazy = lazy(() =>
+  import('@/pages/admin/order-create').then((module) => ({
+    default: module.OrderCreatePage,
+  })),
+)
+
+export const WarehousePageLazy = lazy(() =>
+  import('@/pages/admin/warehouse').then((module) => ({
+    default: module.WarehousePage,
+  })),
+)
+
 export const NotFoundPageLazy = lazy(() =>
   import('@/pages/not-found').then((module) => ({
     default: module.NotFoundPage,

@@ -23,10 +23,12 @@ const STOCK_STATUS_FROM_DTO: Record<TStockStatusDto, TStockStatus> = {
 
 export function mapProductDto(dto: TProductDto): TProductDetail {
   const quantity = dto.stock?.quantity ?? 0
+  const reserved = dto.stock?.reserved ?? 0
+  const available = dto.stock?.available ?? quantity - reserved
   const min = dto.stock?.min ?? 0
   const stockStatus =
     (dto.stock && STOCK_STATUS_FROM_DTO[dto.stock.status]) ??
-    resolveStockStatus(quantity, min)
+    resolveStockStatus(available, min)
 
   return {
     id: dto.id,
@@ -41,6 +43,8 @@ export function mapProductDto(dto: TProductDto): TProductDetail {
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     quantity,
+    reserved,
+    available,
     min,
     stockStatus,
   }
@@ -64,6 +68,9 @@ export function mapProductsQuery(query: TProductsQuery): TProductQueryDto {
     minPrice: query.priceFrom,
     maxPrice: query.priceTo,
     inStock: query.inStock,
+    lowStock: query.lowStock,
+    sortBy: query.sortBy,
+    sortOrder: query.sortOrder,
     page: query.page,
     limit: query.pageSize,
   }

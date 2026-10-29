@@ -4,6 +4,8 @@ export type TStockDto = {
   quantity: number
   min: number
   status: TStockStatusDto
+  reserved: number
+  available: number
 }
 
 export type TProductDto = {
@@ -37,6 +39,9 @@ export type TProductQueryDto = {
   minPrice?: number
   maxPrice?: number
   inStock?: boolean
+  lowStock?: boolean
+  sortBy?: string
+  sortOrder?: string
   page: number
   limit: number
 }

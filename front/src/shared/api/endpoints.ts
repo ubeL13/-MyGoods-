@@ -12,4 +12,12 @@ export const API_ENDPOINTS = {
     list: v1('/categories'),
     byId: (categoryId: number | string) => v1(`/categories/${categoryId}`),
   },
+  orders: {
+    list: v1('/orders'),
+    byId: (orderId: string) => v1(`/orders/${orderId}`),
+    status: (orderId: string) => v1(`/orders/${orderId}/status`),
+  },
+  customers: {
+    list: v1('/customers'),
+  },
 } as const

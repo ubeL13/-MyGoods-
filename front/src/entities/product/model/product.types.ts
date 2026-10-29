@@ -10,6 +10,8 @@ export type TProductListItem = {
   categoryId: string
   categoryName: string
   quantity: number
+  reserved: number
+  available: number
   min: number
   stockStatus: TStockStatus
   isActive: boolean
@@ -20,7 +22,12 @@ export type TProductsFilters = {
   priceFrom?: number
   priceTo?: number
   inStock?: boolean
+  lowStock?: boolean
+  sortBy?: TProductsSortBy
+  sortOrder?: 'asc' | 'desc'
 }
+
+export type TProductsSortBy = 'name' | 'price' | 'stock' | 'createdAt'
 
 export type TProductDetail = TProductListItem & {
   description: string

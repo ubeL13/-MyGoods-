@@ -1,0 +1,37 @@
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 900px;
+}
+
+.order-form__grow {
+  flex: 1;
+}
+
+.order-form__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px 120px auto;
+  gap: var(--spacing-sm);
+  align-items: start;
+}
+
+.order-form__product {
+  min-width: 0;
+}
+
+.order-form__sum {
+  padding-top: 5px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.order-form__total {
+  margin-top: var(--spacing-md);
+}
+
+@media (max-width: 640px) {
+  .order-form__item {
+    grid-template-columns: 1fr 1fr;
+  }
+}

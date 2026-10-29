@@ -46,13 +46,15 @@ const columns: TableColumnsType<TProductListItem> = [
     render: (price: number) => formatPrice(price),
   },
   {
-    title: 'Остаток',
-    dataIndex: 'quantity',
+    title: 'Доступно',
+    dataIndex: 'available',
     align: 'right',
     width: 130,
-    render: (quantity: number, product) => (
-      <span title={`Минимальный остаток: ${product.min} шт.`}>
-        {quantity} шт.
+    render: (available: number, product) => (
+      <span
+        title={`На складе: ${product.quantity} шт., в резерве: ${product.reserved} шт., минимальный остаток: ${product.min} шт.`}
+      >
+        {available} шт.
       </span>
     ),
   },

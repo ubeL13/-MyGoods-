@@ -88,6 +88,16 @@ export function ProductDetailPage() {
                 suffix="шт."
               />
               <Statistic
+                title="В резерве"
+                value={product.reserved}
+                suffix="шт."
+              />
+              <Statistic
+                title="Доступно к заказу"
+                value={product.available}
+                suffix="шт."
+              />
+              <Statistic
                 title="Минимальный остаток"
                 value={product.min}
                 suffix="шт."
