@@ -17,7 +17,7 @@ public static class OrderDataSeeder
         }
 
         var customers = await db.Customers.OrderBy(c => c.Name).ToListAsync();
-        var products = await db.Products.OrderBy(p => p.Sku).ToListAsync();
+        var products = await db.Products.Include(p => p.RemainingProduct).OrderBy(p => p.Sku).ToListAsync();
 
         if (customers.Count == 0 || products.Count < 6)
         {
@@ -123,6 +123,11 @@ public static class OrderDataSeeder
             }
         };
         order6.RecalculateTotal();
+        
+        // Неотправленные заказы держат товар в резерве - как при создании заказа через API
+        foreach (var item in new[] { order1, order2, order3 }.SelectMany(o => o.Items))
+            products.Single(p => p.Id == item.ProductId).RemainingProduct!.Reserved += item.Quantity;
+        
 
         db.Orders.AddRange(order1, order2, order3, order4, order5, order6);
         
