@@ -93,7 +93,11 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
     } catch (submitError) {
       const message = getApiErrorMessage(submitError)
 
-      if (isConflictError(submitError) && values.customerMode === 'new') {
+      if (
+        isConflictError(submitError) &&
+        values.customerMode === 'new' &&
+        message.toLowerCase().includes('телефон')
+      ) {
         form.setFields([{ name: ['newCustomer', 'phone'], errors: [message] }])
       } else {
         setError(message)
@@ -214,7 +218,7 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
                       name={[field.name, 'productId']}
                       className={styles['order-form__product']}
                       rules={[{ required: true, message: 'Выберите товар' }]}
-                      extra={product && `В наличии: ${product.quantity} шт.`}
+                      extra={product && `Доступно: ${product.available} шт.`}
                     >
                       <ProductSelect
                         selectedProduct={product}
@@ -233,10 +237,10 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
                             if (
                               product &&
                               quantity &&
-                              quantity > product.quantity
+                              quantity > product.available
                             ) {
                               throw new Error(
-                                `В наличии только ${product.quantity} шт.`,
+                                `Доступно только ${product.available} шт.`,
                               )
                             }
                           },

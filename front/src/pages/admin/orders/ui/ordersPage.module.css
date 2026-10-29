@@ -1,0 +1,16 @@
+.orders-page__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.orders-page__title {
+  margin: 0;
+}
+
+.orders-page__search {
+  max-width: 420px;
+  margin-bottom: var(--spacing-md);
+}
+
+.orders-page__error {
+  margin-bottom: var(--spacing-md);
+}

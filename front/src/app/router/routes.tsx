@@ -4,6 +4,7 @@ import {
   CategoriesPageLazy,
   NotFoundPageLazy,
   OrderCreatePageLazy,
+  OrdersPageLazy,
   ProductCreatePageLazy,
   ProductDetailPageLazy,
   ProductEditPageLazy,
@@ -74,6 +75,14 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <CategoriesPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.orders,
+            element: (
+              <PageSuspense>
+                <OrdersPageLazy />
               </PageSuspense>
             ),
           },

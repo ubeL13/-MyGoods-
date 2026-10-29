@@ -4,6 +4,8 @@ export type TStockDto = {
   quantity: number
   min: number
   status: TStockStatusDto
+  reserved: number
+  available: number
 }
 
 export type TProductDto = {

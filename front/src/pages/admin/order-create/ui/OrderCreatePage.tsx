@@ -26,13 +26,20 @@ export function OrderCreatePage() {
     return (
       <Result
         status="success"
-        title="Заказ создан"
+        title={`Заказ №${createdOrder.number} создан`}
         subTitle={`${createdOrder.customerName}, сумма ${formatPrice(createdOrder.totalAmount)}`}
-        extra={
-          <Button type="primary" onClick={() => setCreatedOrder(undefined)}>
+        extra={[
+          <Button
+            key="list"
+            type="primary"
+            onClick={() => navigate(APP_ROUTES.orders)}
+          >
+            К списку заказов
+          </Button>,
+          <Button key="more" onClick={() => setCreatedOrder(undefined)}>
             Создать ещё
-          </Button>
-        }
+          </Button>,
+        ]}
       />
     )
   }
@@ -42,7 +49,7 @@ export function OrderCreatePage() {
       <Typography.Title level={2}>Новый заказ</Typography.Title>
       <OrderForm
         onSubmit={handleSubmit}
-        onCancel={() => navigate(APP_ROUTES.products)}
+        onCancel={() => navigate(APP_ROUTES.orders)}
       />
     </section>
   )

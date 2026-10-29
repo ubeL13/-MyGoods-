@@ -10,6 +10,8 @@ export type TProductListItem = {
   categoryId: string
   categoryName: string
   quantity: number
+  reserved: number
+  available: number
   min: number
   stockStatus: TStockStatus
   isActive: boolean
