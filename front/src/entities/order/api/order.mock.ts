@@ -162,23 +162,56 @@ export function getOrdersMock(query: TOrdersQueryDto): Promise<TOrdersPageDto> {
   }))
 }
 
-export function getOrderByIdMock(orderId: string): Promise<TOrderDto> {
-  return withDelay(() => {
-    const order = ORDERS_MOCK.find((item) => item.id === orderId)
-    if (order) return order
+function mockApiError(status: number, title: string): AxiosError {
+  return new AxiosError(
+    title,
+    AxiosError.ERR_BAD_REQUEST,
+    undefined,
+    undefined,
+    {
+      status,
+      statusText: title,
+      data: { title },
+      headers: {},
+      config: { headers: new AxiosHeaders() },
+    },
+  )
+}
 
-    throw new AxiosError(
-      'Not Found',
-      AxiosError.ERR_BAD_REQUEST,
-      undefined,
-      undefined,
-      {
-        status: 404,
-        statusText: 'Not Found',
-        data: { title: 'Заказ не найден' },
-        headers: {},
-        config: { headers: new AxiosHeaders() },
-      },
-    )
+const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+  New: ['Confirmed'],
+  Confirmed: ['Assembled'],
+  Assembled: ['Shipped'],
+}
+
+function findOrderIndex(orderId: string): number {
+  const index = ORDERS_MOCK.findIndex((item) => item.id === orderId)
+  if (index === -1) throw mockApiError(404, 'Заказ не найден')
+  return index
+}
+
+export function getOrderByIdMock(orderId: string): Promise<TOrderDto> {
+  return withDelay(() => ORDERS_MOCK[findOrderIndex(orderId)] as TOrderDto)
+}
+
+export function changeOrderStatusMock(
+  orderId: string,
+  status: string,
+): Promise<TOrderDto> {
+  return withDelay(() => {
+    const index = findOrderIndex(orderId)
+    const order = ORDERS_MOCK[index] as TOrderDto
+
+    if (!ALLOWED_TRANSITIONS[order.status]?.includes(status)) {
+      throw mockApiError(
+        409,
+        `Нельзя перевести заказ №${order.number} в статус ${status}.`,
+      )
+    }
+
+    const updated = { ...order, status, updatedAt: new Date().toISOString() }
+    ORDERS_MOCK[index] = updated
+
+    return updated
   })
 }
