@@ -264,4 +264,34 @@ public class OrderServiceTests
         Assert.Equal(0, _laptop.RemainingProduct!.Quantity);
         Assert.Equal(0, _laptop.RemainingProduct.Reserved);
     }
+
+    // ---------- Отмена и доставка ----------
+
+    /// <summary>
+    /// Отмена через смену статуса (так делает фронт) снимает резерв, товар остаётся на складе.
+    /// </summary>
+    [Fact]
+    public async Task Cancel_ViaStatus_ReleasesReservation()
+    {
+        var id = await CreateAssembled(Item(_phone, 3));
+
+        var order = await _service.ChangeStatus(id, To("Cancelled"));
+
+        Assert.Equal("Cancelled", order.Status);
+        Assert.Equal(10, _phone.RemainingProduct!.Quantity);
+        Assert.Equal(0, _phone.RemainingProduct.Reserved);
+    }
+
+    /// <summary>
+    /// Отправленный заказ отменить нельзя, но можно отметить доставленным.
+    /// </summary>
+    [Fact]
+    public async Task Shipped_CannotBeCancelled_CanBeDelivered()
+    {
+        var id = await CreateAssembled(Item(_phone, 1));
+        await _service.ChangeStatus(id, To("Shipped"));
+
+        await Assert.ThrowsAsync<ConflictException>(() => _service.Cancel(id));
+        Assert.Equal("Delivered", (await _service.Deliver(id)).Status);
+    }
 }
