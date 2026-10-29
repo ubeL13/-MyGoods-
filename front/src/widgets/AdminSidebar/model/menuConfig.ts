@@ -39,4 +39,15 @@ export const ADMIN_MENU_GROUPS: TAdminMenuGroup[] = [
       },
     ],
   },
+  {
+    key: 'warehouse',
+    label: 'Склад',
+    items: [
+      {
+        key: 'warehouse',
+        label: 'Остатки',
+        path: APP_ROUTES.warehouse,
+      },
+    ],
+  },
 ]

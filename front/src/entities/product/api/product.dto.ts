@@ -39,6 +39,9 @@ export type TProductQueryDto = {
   minPrice?: number
   maxPrice?: number
   inStock?: boolean
+  lowStock?: boolean
+  sortBy?: string
+  sortOrder?: string
   page: number
   limit: number
 }

@@ -10,6 +10,7 @@ import {
   ProductDetailPageLazy,
   ProductEditPageLazy,
   ProductsPageLazy,
+  WarehousePageLazy,
 } from '@/app/router/lazyPages'
 import { PageSuspense } from '@/app/router/PageSuspense'
 import { AdminLayout } from '@/app/ui/AdminLayout'
@@ -76,6 +77,14 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <CategoriesPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.warehouse,
+            element: (
+              <PageSuspense>
+                <WarehousePageLazy />
               </PageSuspense>
             ),
           },

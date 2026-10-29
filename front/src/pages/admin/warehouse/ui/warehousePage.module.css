@@ -1,0 +1,23 @@
+.warehouse-page__title {
+  margin-top: 0;
+}
+
+.warehouse-page__filters {
+  margin-bottom: var(--spacing-md);
+}
+
+.warehouse-page__search {
+  max-width: 360px;
+}
+
+.warehouse-page__error {
+  margin-bottom: var(--spacing-md);
+}
+
+.warehouse-page__row_low > td {
+  background: var(--color-warning-bg);
+}
+
+.warehouse-page__row_out > td {
+  background: var(--color-danger-bg);
+}
