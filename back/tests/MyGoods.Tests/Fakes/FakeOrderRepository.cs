@@ -85,4 +85,10 @@ public class FakeOrderRepository : IOrderRepository
     {
         return Task.FromResult((new List<Order>(), 0));
     }
+    
+    /// <inheritdoc />
+    public Task<List<Guid>> SaveCancelled(Order order)
+    {
+        return Task.FromResult(new List<Guid>());
+    }
 }

@@ -138,13 +138,15 @@ public class OrderService(
 
     /// <summary>
     /// Разрешённые переходы статусов: из какого статуса в какие можно перевести заказ.
+    /// Отмена доступна до момента отправки (из New, Confirmed, Assembled).
     /// Всё, чего нет в таблице, запрещено.
     /// </summary>
     private static readonly Dictionary<OrderStatus, OrderStatus[]> AllowedTransitions = new()
     {
-        [OrderStatus.New] = [OrderStatus.Confirmed],
-        [OrderStatus.Confirmed] = [OrderStatus.Assembled],
-        [OrderStatus.Assembled] = [OrderStatus.Shipped],
+        [OrderStatus.New] = [OrderStatus.Confirmed, OrderStatus.Cancelled],
+        [OrderStatus.Confirmed] = [OrderStatus.Assembled, OrderStatus.Cancelled],
+        [OrderStatus.Assembled] = [OrderStatus.Shipped, OrderStatus.Cancelled],
+        [OrderStatus.Shipped] = [OrderStatus.Delivered],
     };
 
     /// <inheritdoc />
@@ -191,4 +193,33 @@ public class OrderService(
         OrderStatus.Cancelled => "Отменён",
         _ => status.ToString()
     };
+    
+    /// <inheritdoc />
+    public async Task<OrderDto> Cancel(Guid id)
+    {
+        var order = await orderRepository.Read(id) ?? throw new NotFoundException($"Заказ {id} не найден");
+    
+        if (!AllowedTransitions.GetValueOrDefault(order.Status, []).Contains(OrderStatus.Cancelled))
+            throw new ConflictException($"Нельзя отменить заказ из статуса {StatusName(order.Status)}");
+
+        var failed = await orderRepository.SaveCancelled(order);
+        if (failed.Count > 0) throw new ConflictException("Ошибка снятия резерва");
+
+        order.ChangeStatus(OrderStatus.Cancelled);
+        await orderRepository.Update(order);
+        return MapperHelper.ToDto(order);
+    }
+
+    /// <inheritdoc />
+    public async Task<OrderDto> Deliver(Guid id)
+    {
+        var order = await orderRepository.Read(id) ?? throw new NotFoundException($"Заказ {id} не найден");
+    
+        if (order.Status != OrderStatus.Shipped)
+            throw new ConflictException("Доставлен можно отметить только отправленный заказ");
+
+        order.ChangeStatus(OrderStatus.Delivered);
+        await orderRepository.Update(order);
+        return MapperHelper.ToDto(order);
+    }
 }

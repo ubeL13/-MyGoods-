@@ -129,4 +129,32 @@ public class OrderRepository(AppDbContext dbContext) : Repository<Order>(dbConte
 
         return (items, total);
     }
+    
+    /// <inheritdoc />
+    public async Task<List<Guid>> SaveCancelled(Order order)
+    {
+        await using var transaction = await DbContext.Database.BeginTransactionAsync();
+
+        var failed = new List<Guid>();
+        foreach (var item in order.Items)
+        {
+            // Товар остаётся на складе — снимаем только резерв этого заказа
+            var updated = await DbContext.RemainingProducts
+                .Where(r => r.ProductId == item.ProductId && r.Reserved >= item.Quantity)
+                .ExecuteUpdateAsync(s => s.SetProperty(r => r.Reserved, r => r.Reserved - item.Quantity));
+
+            if (updated == 0)
+                failed.Add(item.ProductId);
+        }
+
+        if (failed.Count > 0)
+        {
+            await transaction.RollbackAsync();
+            return failed;
+        }
+
+        await DbContext.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return failed;
+    }
 }
