@@ -5,6 +5,8 @@
   --color-text: #0f172a;
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
+  --color-warning-bg: #fffbe6;
+  --color-danger-bg: #fff1f0;
 
   --font-family: system-ui, -apple-system, sans-serif;
 
