@@ -179,9 +179,10 @@ function mockApiError(status: number, title: string): AxiosError {
 }
 
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
-  New: ['Confirmed'],
-  Confirmed: ['Assembled'],
-  Assembled: ['Shipped'],
+  New: ['Confirmed', 'Cancelled'],
+  Confirmed: ['Assembled', 'Cancelled'],
+  Assembled: ['Shipped', 'Cancelled'],
+  Shipped: ['Delivered'],
 }
 
 function findOrderIndex(orderId: string): number {

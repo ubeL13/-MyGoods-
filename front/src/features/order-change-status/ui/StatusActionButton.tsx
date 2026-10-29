@@ -4,23 +4,23 @@ import { useState } from 'react'
 import { changeOrderStatus, type TOrder } from '@/entities/order'
 import { getApiErrorMessage } from '@/shared/lib'
 
-import { NEXT_STATUS_ACTION } from '../model/nextStatusAction'
+import type { TStatusAction } from '../model/statusActions'
 
-type TChangeOrderStatusButtonProps = {
+type TStatusActionButtonProps = {
   order: TOrder
+  action: TStatusAction
+  danger?: boolean
   onChange: (order: TOrder) => void
 }
 
-export function ChangeOrderStatusButton({
+export function StatusActionButton({
   order,
+  action,
+  danger = false,
   onChange,
-}: TChangeOrderStatusButtonProps) {
+}: TStatusActionButtonProps) {
   const { message } = App.useApp()
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const action = NEXT_STATUS_ACTION[order.status]
-
-  if (!action) return null
 
   const changeStatus = async () => {
     setIsSubmitting(true)
@@ -41,10 +41,15 @@ export function ChangeOrderStatusButton({
       title={action.confirmTitle}
       description={action.confirmDescription}
       okText={action.buttonText}
-      cancelText="Отмена"
+      okButtonProps={{ danger }}
+      cancelText="Назад"
       onConfirm={changeStatus}
     >
-      <Button type="primary" loading={isSubmitting}>
+      <Button
+        type={danger ? 'default' : 'primary'}
+        danger={danger}
+        loading={isSubmitting}
+      >
         {action.buttonText}
       </Button>
     </Popconfirm>
