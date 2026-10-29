@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyGoods.Core.Entities;
+using MyGoods.Core.Enums;
 using MyGoods.Core.Repositories;
 using MyGoods.Infrastructure.Data;
 
@@ -89,5 +90,43 @@ public class OrderRepository(AppDbContext dbContext) : Repository<Order>(dbConte
         await DbContext.SaveChangesAsync();
         await transaction.CommitAsync();
         return failed;
+    }
+    
+    /// <inheritdoc />
+    public async Task<(List<Order> Items, int Total)> Search(OrderStatus? status, string? search, int page, int limit)
+    {
+        var query = Set.AsQueryable();
+
+        if (status.HasValue)
+            query = query.Where(o => o.Status == status.Value);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var text = search.Trim();
+            var pattern = $"%{text}%";
+            var digits = new string(text.Where(char.IsDigit).ToArray());
+
+            if (int.TryParse(text, out var number))
+                // Число может быть и номером заказа, и частью телефона
+                query = query.Where(o => o.Number == number || o.Customer!.Phone.Contains(digits));
+            else if (digits.Length > 0)
+                query = query.Where(o => EF.Functions.ILike(o.Customer!.Name, pattern) || o.Customer!.Phone.Contains(digits));
+            else
+                query = query.Where(o => EF.Functions.ILike(o.Customer!.Name, pattern));
+        }
+
+        var total = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(o => o.CreatedAt)
+            .ThenByDescending(o => o.Number)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return (items, total);
     }
 }

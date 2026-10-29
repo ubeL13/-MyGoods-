@@ -3,6 +3,7 @@ using MyGoods.Application.Helpers;
 using MyGoods.Core.Entities;
 using MyGoods.Core.Enums;
 using MyGoods.Core.Repositories;
+using MyGoods.Dto;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Services;
 
@@ -19,6 +20,27 @@ public class OrderService(
     ICustomerRepository customerRepository,
     IProductRepository productRepository) : IOrderService
 {
+    /// <inheritdoc />
+    public async Task<PagedResult<OrderListItemDto>> GetList(OrderQueryDto query)
+    {
+        OrderStatus? status = query.Status == null ? null : Enum.Parse<OrderStatus>(query.Status);
+        var (items, total) = await orderRepository.Search(status, query.Search, query.Page, query.Limit);
+
+        var totalPages = (int)Math.Ceiling(total / (double)query.Limit);
+        return new PagedResult<OrderListItemDto>(
+            items.Select(MapperHelper.ToListItemDto).ToList(),
+            new PageMeta(query.Page, query.Limit, total, totalPages));
+    }
+
+    /// <inheritdoc />
+    public async Task<OrderDto> GetById(Guid id)
+    {
+        var order = await orderRepository.Read(id)
+            ?? throw new NotFoundException($"Заказ с id {id} не найден.");
+
+        return MapperHelper.ToDto(order);
+    }
+
     /// <inheritdoc />
     public async Task<OrderDto> Create(OrderCreateDto dto)
     {

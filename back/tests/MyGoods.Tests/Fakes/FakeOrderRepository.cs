@@ -1,4 +1,5 @@
 using MyGoods.Core.Entities;
+using MyGoods.Core.Enums;
 using MyGoods.Core.Repositories;
 
 namespace MyGoods.Tests.Fakes;
@@ -77,5 +78,11 @@ public class FakeOrderRepository : IOrderRepository
         }
 
         return Task.FromResult(failed);
+    }
+
+    /// <inheritdoc />
+    public Task<(List<Order> Items, int Total)> Search(OrderStatus? status, string? search, int page, int limit)
+    {
+        return Task.FromResult((new List<Order>(), 0));
     }
 }

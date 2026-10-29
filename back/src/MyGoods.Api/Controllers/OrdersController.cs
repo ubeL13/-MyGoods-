@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MyGoods.Dto;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Services;
 
@@ -12,6 +13,26 @@ namespace MyGoods.Api.Controllers;
 [Route("api/v1/orders")]
 public class OrdersController(IOrderService orderService) : ControllerBase
 {
+    /// <summary>
+    /// Список заказов: фильтр по статусу, поиск по номеру, имени или телефону покупателя, пагинация. Новые сверху.
+    /// </summary>
+    /// <param name="query">Параметры списка из строки запроса</param>
+    [HttpGet]
+    [ProducesResponseType<PagedResult<OrderListItemDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResult<OrderListItemDto>>> GetList([FromQuery] OrderQueryDto query) =>
+        Ok(await orderService.GetList(query));
+
+    /// <summary>
+    /// Карточка заказа: покупатель, адрес, позиции, сумма, статус.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<OrderDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<OrderDto>> GetById(Guid id) =>
+        Ok(await orderService.GetById(id));
+
     /// <summary>
     /// Создаёт заказ вручную (менеджер). Покупатель — существующий (customerId) или новый (newCustomer).
     /// Заказ создаётся в статусе «Новый», цены позиций фиксируются на момент создания.
