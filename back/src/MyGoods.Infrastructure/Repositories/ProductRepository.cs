@@ -89,7 +89,8 @@ public class ProductRepository(AppDbContext dbContext) : Repository<Product>(dbC
             query = query.Where(p => p.Price <= filter.MaxPrice.Value);
 
         if (filter.InStockOnly)
-            query = query.Where(p => p.RemainingProduct != null && p.RemainingProduct.Quantity > 0);
+            // «В наличии» — то, что можно заказать: на складе минус зарезервировано
+            query = query.Where(p => p.RemainingProduct != null && p.RemainingProduct.Quantity - p.RemainingProduct.Reserved > 0);
 
         if (filter.IsActive.HasValue)
             query = query.Where(p => p.IsActive == filter.IsActive.Value);
