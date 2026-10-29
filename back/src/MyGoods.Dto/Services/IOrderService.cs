@@ -34,4 +34,16 @@ public interface IOrderService
     /// <param name="dto">Новый статус</param>
     /// <returns>Заказ с новым статусом</returns>
     Task<OrderDto> ChangeStatus(Guid id, OrderStatusChangeDto dto);
+    
+    /// <summary>
+    /// Отменяет заказ, если он еще не отправлен, и снимает резерв с товаров.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    Task<OrderDto> Cancel(Guid id);
+
+    /// <summary>
+    /// Отмечает отправленный заказ как доставленный.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    Task<OrderDto> Deliver(Guid id);
 }

@@ -61,4 +61,18 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<OrderDto>> ChangeStatus(Guid id, OrderStatusChangeDto dto) =>
         Ok(await orderService.ChangeStatus(id, dto));
+    
+    /// <summary>
+    /// Отменяет заказ. Возвращает 409, если заказ уже отправлен или доставлен.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    [HttpPost("{id:guid}/cancel")]
+    public async Task<ActionResult<OrderDto>> Cancel(Guid id) => Ok(await orderService.Cancel(id));
+
+    /// <summary>
+    /// Отмечает заказ как доставленный. Доступно только для отправленных заказов.
+    /// </summary>
+    /// <param name="id">Идентификатор заказа</param>
+    [HttpPost("{id:guid}/deliver")]
+    public async Task<ActionResult<OrderDto>> Deliver(Guid id) => Ok(await orderService.Deliver(id));
 }

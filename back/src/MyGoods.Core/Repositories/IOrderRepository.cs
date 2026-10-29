@@ -33,4 +33,11 @@ public interface IOrderRepository : IRepository<Order>
     /// <param name="limit">Заказов на странице</param>
     /// <returns>Заказы страницы и общее количество найденных</returns>
     Task<(List<Order> Items, int Total)> Search(OrderStatus? status, string? search, int page, int limit);
+    
+    /// <summary>
+    /// В одной транзакции снимает резерв товаров отменяемого заказа (товар остается на складе).
+    /// </summary>
+    /// <param name="order">Отменяемый заказ с позициями</param>
+    /// <returns>Идентификаторы товаров, у которых не удалось снять резерв (пусто — резерв снят)</returns>
+    Task<List<Guid>> SaveCancelled(Order order);
 }
