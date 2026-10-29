@@ -80,7 +80,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasForeignKey<RemainingProduct>(r => r.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
-        
+
+        modelBuilder.Entity<RemainingProduct>(entity =>
+        {
+            // Защита на уровне базы: резерв не бывает отрицательным и не больше, чем лежит на складе
+            entity.ToTable(t => t.HasCheckConstraint(
+                "CK_RemainingProducts_Reserved",
+                "\"Reserved\" >= 0 AND \"Reserved\" <= \"Quantity\""));
+        });
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(c => c.Id);
