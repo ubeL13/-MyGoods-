@@ -89,6 +89,18 @@ public class FakeOrderRepository : IOrderRepository
     /// <inheritdoc />
     public Task<List<Guid>> SaveCancelled(Order order)
     {
-        return Task.FromResult(new List<Guid>());
+        var failed = order.Items
+            .Where(i => (i.Product?.RemainingProduct?.Reserved ?? 0) < i.Quantity)
+            .Select(i => i.ProductId)
+            .ToList();
+
+        if (failed.Count > 0)
+            return Task.FromResult(failed);
+
+        // Как в базе: товар остаётся на складе, снимается только резерв
+        foreach (var item in order.Items)
+            item.Product!.RemainingProduct!.Reserved -= item.Quantity;
+
+        return Task.FromResult(failed);
     }
 }

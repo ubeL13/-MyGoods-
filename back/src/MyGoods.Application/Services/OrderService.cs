@@ -164,6 +164,18 @@ public class OrderService(
 
         order.ChangeStatus(newStatus);
 
+        if (newStatus == OrderStatus.Cancelled)
+        {
+            // Отмена: товар остаётся на складе, снимается только резерв — вместе со сменой статуса
+            // в одной транзакции, либо всё, либо ничего
+            var notReleased = await orderRepository.SaveCancelled(order);
+            if (notReleased.Count > 0)
+                throw new ConflictException(
+                    $"Не удалось снять резерв заказа №{order.Number}. {DescribeShortage(order, notReleased)}.");
+
+            return MapperHelper.ToDto(order);
+        }
+
         if (newStatus != OrderStatus.Shipped)
         {
             await orderRepository.Update(order);
@@ -195,31 +207,10 @@ public class OrderService(
     };
     
     /// <inheritdoc />
-    public async Task<OrderDto> Cancel(Guid id)
-    {
-        var order = await orderRepository.Read(id) ?? throw new NotFoundException($"Заказ {id} не найден");
-    
-        if (!AllowedTransitions.GetValueOrDefault(order.Status, []).Contains(OrderStatus.Cancelled))
-            throw new ConflictException($"Нельзя отменить заказ из статуса {StatusName(order.Status)}");
-
-        var failed = await orderRepository.SaveCancelled(order);
-        if (failed.Count > 0) throw new ConflictException("Ошибка снятия резерва");
-
-        order.ChangeStatus(OrderStatus.Cancelled);
-        await orderRepository.Update(order);
-        return MapperHelper.ToDto(order);
-    }
+    public Task<OrderDto> Cancel(Guid id) =>
+        ChangeStatus(id, new OrderStatusChangeDto { Status = nameof(OrderStatus.Cancelled) });
 
     /// <inheritdoc />
-    public async Task<OrderDto> Deliver(Guid id)
-    {
-        var order = await orderRepository.Read(id) ?? throw new NotFoundException($"Заказ {id} не найден");
-    
-        if (order.Status != OrderStatus.Shipped)
-            throw new ConflictException("Доставлен можно отметить только отправленный заказ");
-
-        order.ChangeStatus(OrderStatus.Delivered);
-        await orderRepository.Update(order);
-        return MapperHelper.ToDto(order);
-    }
+    public Task<OrderDto> Deliver(Guid id) =>
+        ChangeStatus(id, new OrderStatusChangeDto { Status = nameof(OrderStatus.Delivered) });
 }
