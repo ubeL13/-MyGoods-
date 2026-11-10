@@ -17,6 +17,11 @@ export const API_ENDPOINTS = {
     byId: (orderId: string) => v1(`/orders/${orderId}`),
     status: (orderId: string) => v1(`/orders/${orderId}/status`),
   },
+  suppliers: {
+    list: v1('/suppliers'),
+    byId: (supplierId: string) => v1(`/suppliers/${supplierId}`),
+    archive: (supplierId: string) => v1(`/suppliers/${supplierId}/archive`),
+  },
   customers: {
     list: v1('/customers'),
   },

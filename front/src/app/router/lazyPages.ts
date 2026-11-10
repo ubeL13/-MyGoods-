@@ -54,6 +54,12 @@ export const WarehousePageLazy = lazy(() =>
   })),
 )
 
+export const SuppliersPageLazy = lazy(() =>
+  import('@/pages/admin/suppliers').then((module) => ({
+    default: module.SuppliersPage,
+  })),
+)
+
 export const NotFoundPageLazy = lazy(() =>
   import('@/pages/not-found').then((module) => ({
     default: module.NotFoundPage,
