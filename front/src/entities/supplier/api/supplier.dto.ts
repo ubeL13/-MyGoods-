@@ -3,11 +3,10 @@ export type TSupplierDto = {
   name: string
   inn: string | null
   contactPerson: string | null
-  phone: string | null
+  phone: string
   email: string | null
   address: string | null
-  comment: string | null
-  isArchived: boolean
+  isActive: boolean
   createdAt: string
   updatedAt: string | null
 }
@@ -24,7 +23,7 @@ export type TSuppliersPageDto = {
 
 export type TSuppliersQueryDto = {
   search?: string
-  archived: boolean
+  isActive: boolean
   page: number
   limit: number
 }
@@ -33,8 +32,7 @@ export type TSupplierEditDto = {
   name: string
   inn: string | null
   contactPerson: string | null
-  phone: string | null
+  phone: string
   email: string | null
   address: string | null
-  comment: string | null
 }

@@ -44,7 +44,8 @@ export function SupplierFormModal({
       const message = getApiErrorMessage(submitError)
 
       if (isConflictError(submitError)) {
-        form.setFields([{ name: 'inn', errors: [message] }])
+        const field = message.includes('ИНН') ? 'inn' : 'name'
+        form.setFields([{ name: field, errors: [message] }])
       } else {
         setError(message)
       }
@@ -83,7 +84,6 @@ export function SupplierFormModal({
           phone: supplier?.phone ?? '',
           email: supplier?.email ?? '',
           address: supplier?.address ?? '',
-          comment: supplier?.comment ?? '',
         }}
         onFinish={handleFinish}
         disabled={isSubmitting}
@@ -129,6 +129,7 @@ export function SupplierFormModal({
             name="phone"
             className={styles['supplier-form__grow']}
             rules={[
+              { required: true, message: 'Укажите телефон' },
               { pattern: PHONE_PATTERN, message: 'Пример: +7 846 200-10-10' },
             ]}
           >
@@ -150,14 +151,6 @@ export function SupplierFormModal({
           rules={[{ max: 500, message: 'Не длиннее 500 символов' }]}
         >
           <Input />
-        </Form.Item>
-
-        <Form.Item<TSupplierFormValues>
-          label="Комментарий"
-          name="comment"
-          rules={[{ max: 500, message: 'Не длиннее 500 символов' }]}
-        >
-          <Input.TextArea rows={3} showCount maxLength={500} />
         </Form.Item>
       </Form>
     </Modal>

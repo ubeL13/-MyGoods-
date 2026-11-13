@@ -18,8 +18,7 @@ let suppliers: TSupplierDto[] = [
     phone: '78462001010',
     email: 'opt@textilprom.ru',
     address: 'Самара, ул. Партизанская, 17',
-    comment: 'Футболки и шорты, отгрузка по вторникам',
-    isArchived: false,
+    isActive: true,
     createdAt: CREATED_AT,
     updatedAt: null,
   },
@@ -31,8 +30,7 @@ let suppliers: TSupplierDto[] = [
     phone: '79270004455',
     email: null,
     address: 'Тольятти, Южное ш., 3',
-    comment: null,
-    isArchived: false,
+    isActive: true,
     createdAt: CREATED_AT,
     updatedAt: null,
   },
@@ -44,8 +42,7 @@ let suppliers: TSupplierDto[] = [
     phone: '74951234567',
     email: 'sales@elsnab.ru',
     address: 'Москва, Варшавское ш., 125',
-    comment: 'Смартфоны и ноутбуки',
-    isArchived: false,
+    isActive: true,
     createdAt: CREATED_AT,
     updatedAt: null,
   },
@@ -57,8 +54,7 @@ let suppliers: TSupplierDto[] = [
     phone: '78462337788',
     email: 'info@vodezhda.ru',
     address: null,
-    comment: 'Больше не работаем',
-    isArchived: true,
+    isActive: false,
     createdAt: CREATED_AT,
     updatedAt: '2026-10-20T12:00:00.000Z',
   },
@@ -98,14 +94,20 @@ function findSupplier(supplierId: string): TSupplierDto {
   return supplier
 }
 
-function assertInnIsFree(inn: string | null, exceptId?: string) {
-  if (!inn) return
+function assertUnique(dto: TSupplierEditDto, exceptId?: string) {
+  const others = suppliers.filter((item) => item.id !== exceptId)
+  const name = dto.name.toLowerCase()
 
-  const owner = suppliers.find(
-    (item) => item.inn === inn && item.id !== exceptId,
-  )
-  if (owner) {
-    throw mockApiError(409, `Поставщик с ИНН ${inn} уже есть: «${owner.name}».`)
+  if (others.some((item) => item.name.toLowerCase() === name)) {
+    throw mockApiError(409, `Поставщик с названием «${dto.name}» уже есть.`)
+  }
+
+  const innOwner = dto.inn && others.find((item) => item.inn === dto.inn)
+  if (innOwner) {
+    throw mockApiError(
+      409,
+      `Поставщик с ИНН ${dto.inn} уже есть: «${innOwner.name}».`,
+    )
   }
 }
 
@@ -121,7 +123,7 @@ export function getSuppliersMock(
   const digits = search.replace(/\D/g, '')
 
   const found = suppliers
-    .filter((item) => item.isArchived === query.archived)
+    .filter((item) => item.isActive === query.isActive)
     .filter((item) => {
       if (!search) return true
 
@@ -130,7 +132,7 @@ export function getSuppliersMock(
         (item.contactPerson?.toLowerCase().includes(search) ?? false) ||
         (digits.length > 0 &&
           ((item.inn?.includes(digits) ?? false) ||
-            (item.phone?.includes(digits) ?? false)))
+            item.phone.includes(digits)))
       )
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
@@ -152,12 +154,13 @@ export function createSupplierMock(
   dto: TSupplierEditDto,
 ): Promise<TSupplierDto> {
   return withDelay(() => {
-    assertInnIsFree(dto.inn)
+    assertUnique(dto)
 
     const supplier: TSupplierDto = {
       ...dto,
+      phone: dto.phone.replace(/\D/g, ''),
       id: crypto.randomUUID(),
-      isArchived: false,
+      isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: null,
     }
@@ -173,24 +176,25 @@ export function updateSupplierMock(
 ): Promise<TSupplierDto> {
   return withDelay(() => {
     const supplier = findSupplier(supplierId)
-    assertInnIsFree(dto.inn, supplierId)
+    assertUnique(dto, supplierId)
 
     return replaceSupplier({
       ...supplier,
       ...dto,
+      phone: dto.phone.replace(/\D/g, ''),
       updatedAt: new Date().toISOString(),
     })
   })
 }
 
-export function setSupplierArchivedMock(
+export function setSupplierActiveMock(
   supplierId: string,
-  isArchived: boolean,
+  isActive: boolean,
 ): Promise<TSupplierDto> {
   return withDelay(() =>
     replaceSupplier({
       ...findSupplier(supplierId),
-      isArchived,
+      isActive,
       updatedAt: new Date().toISOString(),
     }),
   )

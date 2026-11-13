@@ -15,7 +15,7 @@ import {
 import {
   createSupplierMock,
   getSuppliersMock,
-  setSupplierArchivedMock,
+  setSupplierActiveMock,
   updateSupplierMock,
 } from './supplier.mock'
 
@@ -48,7 +48,7 @@ export async function setSupplierArchived(
   supplierId: string,
   isArchived: boolean,
 ): Promise<TSupplier> {
-  const data = await setSupplierArchivedMock(supplierId, isArchived)
+  const data = await setSupplierActiveMock(supplierId, !isArchived)
 
   return mapSupplierDto(data)
 }

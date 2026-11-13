@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
   suppliers: {
     list: v1('/suppliers'),
     byId: (supplierId: string) => v1(`/suppliers/${supplierId}`),
-    archive: (supplierId: string) => v1(`/suppliers/${supplierId}/archive`),
+    active: (supplierId: string) => v1(`/suppliers/${supplierId}/active`),
   },
   customers: {
     list: v1('/customers'),

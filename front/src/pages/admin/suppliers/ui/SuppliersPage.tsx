@@ -57,16 +57,6 @@ export function SuppliersPage() {
     {
       title: 'Название',
       dataIndex: 'name',
-      render: (name: string, supplier) => (
-        <>
-          <div>{name}</div>
-          {supplier.comment && (
-            <Typography.Text type="secondary" ellipsis>
-              {supplier.comment}
-            </Typography.Text>
-          )}
-        </>
-      ),
     },
     {
       title: 'ИНН',

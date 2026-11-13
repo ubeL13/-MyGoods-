@@ -8,7 +8,6 @@ export type TSupplier = {
   phone: string
   email: string
   address: string
-  comment: string
   isArchived: boolean
   createdAt: string
   updatedAt: string
@@ -21,7 +20,6 @@ export type TSupplierFormValues = {
   phone: string
   email: string
   address: string
-  comment: string
 }
 
 export type TSuppliersFilters = {

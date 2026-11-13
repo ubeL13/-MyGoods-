@@ -19,11 +19,10 @@ export function mapSupplierDto(dto: TSupplierDto): TSupplier {
     name: dto.name,
     inn: dto.inn ?? '',
     contactPerson: dto.contactPerson ?? '',
-    phone: dto.phone ?? '',
+    phone: dto.phone,
     email: dto.email ?? '',
     address: dto.address ?? '',
-    comment: dto.comment ?? '',
-    isArchived: dto.isArchived,
+    isArchived: !dto.isActive,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt ?? dto.createdAt,
   }
@@ -43,7 +42,7 @@ export function mapSuppliersPageDto(
 export function mapSuppliersQuery(query: TSuppliersQuery): TSuppliersQueryDto {
   return {
     search: query.search?.trim() || undefined,
-    archived: query.archived ?? false,
+    isActive: !query.archived,
     page: query.page,
     limit: query.pageSize,
   }
@@ -58,9 +57,8 @@ export function toSupplierEditDto(
     name: values.name.trim(),
     inn: emptyToNull(values.inn),
     contactPerson: emptyToNull(values.contactPerson),
-    phone: emptyToNull(values.phone),
+    phone: values.phone.trim(),
     email: emptyToNull(values.email),
     address: emptyToNull(values.address),
-    comment: emptyToNull(values.comment),
   }
 }
