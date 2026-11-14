@@ -50,4 +50,15 @@ export const ADMIN_MENU_GROUPS: TAdminMenuGroup[] = [
       },
     ],
   },
+  {
+    key: 'administration',
+    label: 'Администрирование',
+    items: [
+      {
+        key: 'suppliers',
+        label: 'Поставщики',
+        path: APP_ROUTES.suppliers,
+      },
+    ],
+  },
 ]
