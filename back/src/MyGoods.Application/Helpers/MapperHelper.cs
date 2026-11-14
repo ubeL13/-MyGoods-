@@ -2,6 +2,7 @@ using MyGoods.Core.Entities;
 using MyGoods.Dto.Customers;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
+using MyGoods.Dto.Suppliers;
 
 namespace MyGoods.Application.Helpers;
 
@@ -82,4 +83,24 @@ public static class MapperHelper
             item.Quantity,
             item.PriceAtOrder,
             item.PriceAtOrder * item.Quantity);
+    
+    /// <summary>
+    /// Поставщик → SupplierDto.
+    /// </summary>
+    /// <summary>
+    /// Поставщик → SupplierDto.
+    /// </summary>
+    public static SupplierDto ToDto(Supplier supplier) =>
+        new(
+            supplier.Id,
+            supplier.Name,
+            supplier.Inn,
+            supplier.ContactPerson,
+            supplier.Phone,
+            supplier.Email,
+            supplier.Address,
+            supplier.IsActive,
+            supplier.CreatedAt,
+            supplier.UpdatedAt
+        );
 }
