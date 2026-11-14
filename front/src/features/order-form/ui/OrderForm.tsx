@@ -219,7 +219,11 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
                         selectedProduct={product}
                         takenIds={takenIds}
                         onSelectProduct={rememberProduct}
-                        isProductDisabled={(item) => item.available <= 0}
+                        getDisabledReason={(item) =>
+                          item.available <= 0
+                            ? 'Нет доступного остатка'
+                            : undefined
+                        }
                       />
                     </Form.Item>
 

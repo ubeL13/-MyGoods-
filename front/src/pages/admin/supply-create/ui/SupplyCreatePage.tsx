@@ -15,7 +15,7 @@ export function SupplyCreatePage() {
     message.success(
       `Поставка №${supply.number} оформлена на ${formatPrice(supply.totalAmount)}`,
     )
-    navigate(APP_ROUTES.supplies)
+    navigate(APP_ROUTES.supplyDetail(supply.id))
   }
 
   return (

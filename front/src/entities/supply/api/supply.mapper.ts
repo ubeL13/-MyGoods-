@@ -31,6 +31,7 @@ export function mapSupplyDto(dto: TSupplyDto): TSupply {
       sku: item.sku ?? '',
       productName: item.productName ?? '',
       quantity: item.quantity,
+      receivedQuantity: item.receivedQuantity,
       purchasePrice: item.purchasePrice,
       sum: item.sum,
     })),

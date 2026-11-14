@@ -3,6 +3,7 @@ export type TSupplyItemDto = {
   sku: string | null
   productName: string | null
   quantity: number
+  receivedQuantity: number | null
   purchasePrice: number
   sum: number
 }
@@ -54,4 +55,8 @@ export type TSupplyCreateDto = {
   expectedDate: string | null
   comment: string | null
   items: { productId: string; quantity: number; purchasePrice: number }[]
+}
+
+export type TSupplyReceiveDto = {
+  items: { productId: string; receivedQuantity: number }[]
 }
