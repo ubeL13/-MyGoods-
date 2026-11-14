@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import { getProducts, type TProductListItem } from '@/entities/product'
+import { getSuppliers } from '../api/supplier.service'
 
-export function useProductOptions(search: string) {
-  const [products, setProducts] = useState<TProductListItem[]>([])
+import type { TSupplier } from './supplier.types'
+
+export function useSupplierOptions(search: string) {
+  const [suppliers, setSuppliers] = useState<TSupplier[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -13,14 +15,15 @@ export function useProductOptions(search: string) {
       setIsLoading(true)
 
       try {
-        const data = await getProducts({
+        const data = await getSuppliers({
           search: search.trim() || undefined,
+          archived: false,
           page: 1,
           pageSize: 20,
         })
-        if (!isCancelled) setProducts(data.items)
+        if (!isCancelled) setSuppliers(data.items)
       } catch {
-        if (!isCancelled) setProducts([])
+        if (!isCancelled) setSuppliers([])
       } finally {
         if (!isCancelled) setIsLoading(false)
       }
@@ -32,5 +35,5 @@ export function useProductOptions(search: string) {
     }
   }, [search])
 
-  return { products, isLoading }
+  return { suppliers, isLoading }
 }

@@ -14,6 +14,8 @@ export const APP_ROUTES = {
   orders: `${ADMIN}/orders`,
   warehouse: `${ADMIN}/warehouse`,
   suppliers: `${ADMIN}/suppliers`,
+  supplies: `${ADMIN}/supplies`,
+  supplyCreate: `${ADMIN}/supplies/create`,
   orderDetail: (orderId: string) => `${ADMIN}/orders/${orderId}`,
   orderCreate: `${ADMIN}/orders/create`,
 } as const
@@ -27,6 +29,8 @@ export const ROUTE_SEGMENTS = {
   orders: 'orders',
   warehouse: 'warehouse',
   suppliers: 'suppliers',
+  supplies: 'supplies',
+  supplyCreate: 'supplies/create',
   orderDetail: 'orders/:orderId',
   orderCreate: 'orders/create',
 } as const
