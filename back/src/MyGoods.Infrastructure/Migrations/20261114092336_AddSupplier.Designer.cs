@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyGoods.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261113105510_AddSupplier")]
+    [Migration("20261114092336_AddSupplier")]
     partial class AddSupplier
     {
         /// <inheritdoc />
@@ -252,7 +252,8 @@ namespace MyGoods.Infrastructure.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("ContactPerson")
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

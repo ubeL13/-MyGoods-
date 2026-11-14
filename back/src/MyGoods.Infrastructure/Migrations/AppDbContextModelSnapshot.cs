@@ -249,7 +249,8 @@ namespace MyGoods.Infrastructure.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("ContactPerson")
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

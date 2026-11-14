@@ -18,7 +18,7 @@ namespace MyGoods.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Inn = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: true),
-                    ContactPerson = table.Column<string>(type: "text", nullable: true),
+                    ContactPerson = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     Phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Email = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     Address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
