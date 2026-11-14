@@ -1,5 +1,3 @@
-using MyGoods.Core.Entities;
-
 namespace MyGoods.Core.Entities;
 
 /// <summary>

@@ -165,6 +165,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(s => s.Inn)
                 .HasMaxLength(12);
 
+            entity.Property(s => s.ContactPerson)
+                .HasMaxLength(200);
+            
             entity.Property(s => s.Phone)
                 .IsRequired()
                 .HasMaxLength(20);
