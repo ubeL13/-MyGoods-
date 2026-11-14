@@ -30,8 +30,12 @@
   margin-top: var(--spacing-md);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1280px) {
   .order-form__item {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 150px 1fr auto;
+  }
+
+  .order-form__product {
+    grid-column: 1 / -1;
   }
 }
