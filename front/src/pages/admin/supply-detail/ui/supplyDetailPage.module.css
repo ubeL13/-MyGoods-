@@ -1,0 +1,16 @@
+.supply-detail__back {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.supply-detail__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.supply-detail__title {
+  margin: 0;
+}
+
+.supply-detail__card {
+  margin-bottom: var(--spacing-md);
+}

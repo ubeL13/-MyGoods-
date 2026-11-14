@@ -1,9 +1,14 @@
+import { AxiosError, AxiosHeaders } from 'axios'
+
+import { API_ENDPOINTS, apiClient } from '@/shared/api'
+
 import type {
   TSuppliesPageDto,
   TSuppliesQueryDto,
   TSupplyCreateDto,
   TSupplyDto,
   TSupplyListItemDto,
+  TSupplyReceiveDto,
 } from './supply.dto'
 
 const SUPPLIER_NAMES: Record<string, string> = {
@@ -78,6 +83,8 @@ let supplies: TSupplyDto[] = SEED.map((seed, index) => {
     sku,
     productName,
     quantity,
+    receivedQuantity:
+      seed.status === 'Received' ? quantity - (i === 1 ? 1 : 0) : null,
     purchasePrice: price,
     sum: quantity * price,
   }))
@@ -101,9 +108,54 @@ let supplies: TSupplyDto[] = SEED.map((seed, index) => {
 })
 
 function withDelay<T>(getValue: () => T): Promise<T> {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(getValue()), 300)
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(getValue())
+      } catch (error) {
+        reject(error)
+      }
+    }, 300)
   })
+}
+
+function mockApiError(status: number, title: string): AxiosError {
+  return new AxiosError(
+    title,
+    AxiosError.ERR_BAD_REQUEST,
+    undefined,
+    undefined,
+    {
+      status,
+      statusText: title,
+      data: { title },
+      headers: {},
+      config: { headers: new AxiosHeaders() },
+    },
+  )
+}
+
+function findSupply(supplyId: string): TSupplyDto {
+  const supply = supplies.find((item) => item.id === supplyId)
+  if (!supply) throw mockApiError(404, 'Поставка не найдена')
+  return supply
+}
+
+async function loadProductNames(productIds: string[]) {
+  const entries = await Promise.all(
+    productIds.map(async (productId) => {
+      try {
+        const { data } = await apiClient.get<{ sku: string; name: string }>(
+          API_ENDPOINTS.products.byId(productId),
+        )
+        return [productId, { sku: data.sku, name: data.name }] as const
+      } catch {
+        return [productId, null] as const
+      }
+    }),
+  )
+
+  return new Map(entries)
 }
 
 function toListItem(supply: TSupplyDto): TSupplyListItemDto {
@@ -148,12 +200,17 @@ export function getSuppliesMock(
   }))
 }
 
-export function createSupplyMock(dto: TSupplyCreateDto): Promise<TSupplyDto> {
+export async function createSupplyMock(
+  dto: TSupplyCreateDto,
+): Promise<TSupplyDto> {
+  const names = await loadProductNames(dto.items.map((item) => item.productId))
+
   return withDelay(() => {
     const items = dto.items.map((item) => ({
       ...item,
-      sku: null,
-      productName: null,
+      sku: names.get(item.productId)?.sku ?? null,
+      productName: names.get(item.productId)?.name ?? null,
+      receivedQuantity: null,
       sum: item.quantity * item.purchasePrice,
     }))
 
@@ -173,5 +230,42 @@ export function createSupplyMock(dto: TSupplyCreateDto): Promise<TSupplyDto> {
     supplies = [supply, ...supplies]
 
     return supply
+  })
+}
+
+export function getSupplyByIdMock(supplyId: string): Promise<TSupplyDto> {
+  return withDelay(() => findSupply(supplyId))
+}
+
+export function receiveSupplyMock(
+  supplyId: string,
+  dto: TSupplyReceiveDto,
+): Promise<TSupplyDto> {
+  return withDelay(() => {
+    const supply = findSupply(supplyId)
+
+    if (supply.status !== 'Created') {
+      throw mockApiError(
+        409,
+        `Поставка №${supply.number} уже ${supply.status === 'Received' ? 'принята' : 'отменена'}.`,
+      )
+    }
+
+    const received = new Map(
+      dto.items.map((item) => [item.productId, item.receivedQuantity]),
+    )
+
+    const updated: TSupplyDto = {
+      ...supply,
+      status: 'Received',
+      receivedAt: new Date().toISOString(),
+      items: supply.items.map((item) => ({
+        ...item,
+        receivedQuantity: received.get(item.productId) ?? 0,
+      })),
+    }
+    supplies = supplies.map((item) => (item.id === supplyId ? updated : item))
+
+    return updated
   })
 }

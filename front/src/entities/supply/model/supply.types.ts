@@ -7,6 +7,7 @@ export type TSupplyItem = {
   sku: string
   productName: string
   quantity: number
+  receivedQuantity: number | null
   purchasePrice: number
   sum: number
 }
@@ -48,4 +49,8 @@ export type TSupplyCreateValues = {
   expectedDate: string | null
   comment: string | null
   items: { productId: string; quantity: number; purchasePrice: number }[]
+}
+
+export type TSupplyReceiveValues = {
+  items: { productId: string; receivedQuantity: number }[]
 }

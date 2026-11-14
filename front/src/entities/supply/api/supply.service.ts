@@ -5,6 +5,7 @@ import type {
   TSupply,
   TSupplyCreateValues,
   TSupplyListItem,
+  TSupplyReceiveValues,
 } from '../model/supply.types'
 
 import {
@@ -12,7 +13,12 @@ import {
   mapSuppliesQuery,
   mapSupplyDto,
 } from './supply.mapper'
-import { createSupplyMock, getSuppliesMock } from './supply.mock'
+import {
+  createSupplyMock,
+  getSuppliesMock,
+  getSupplyByIdMock,
+  receiveSupplyMock,
+} from './supply.mock'
 
 export async function getSupplies(
   query: TSuppliesQuery,
@@ -26,6 +32,21 @@ export async function createSupply(
   values: TSupplyCreateValues,
 ): Promise<TSupply> {
   const data = await createSupplyMock(values)
+
+  return mapSupplyDto(data)
+}
+
+export async function getSupplyById(supplyId: string): Promise<TSupply> {
+  const data = await getSupplyByIdMock(supplyId)
+
+  return mapSupplyDto(data)
+}
+
+export async function receiveSupply(
+  supplyId: string,
+  values: TSupplyReceiveValues,
+): Promise<TSupply> {
+  const data = await receiveSupplyMock(supplyId, values)
 
   return mapSupplyDto(data)
 }
