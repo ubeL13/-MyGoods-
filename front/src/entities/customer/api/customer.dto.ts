@@ -4,6 +4,7 @@ export type TCustomerDto = {
   phone: string
   email: string | null
   address: string | null
+  createdAt: string
 }
 
 export type TCustomersPageDto = {
@@ -14,4 +15,24 @@ export type TCustomersPageDto = {
     total: number
     totalPages: number
   }
+}
+
+export type TCustomersQueryDto = {
+  search?: string
+  page: number
+  limit: number
+}
+
+export type TCustomerOrderDto = {
+  id: string
+  number: number
+  createdAt: string
+  status: string
+  totalAmount: number
+}
+
+export type TCustomerDetailDto = TCustomerDto & {
+  ordersCount: number
+  totalSpent: number
+  orders: TCustomerOrderDto[]
 }

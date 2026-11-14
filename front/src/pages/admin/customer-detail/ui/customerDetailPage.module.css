@@ -1,0 +1,12 @@
+.customer-detail__back {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.customer-detail__title {
+  margin-top: 0;
+}
+
+.customer-detail__card {
+  margin-bottom: var(--spacing-md);
+}

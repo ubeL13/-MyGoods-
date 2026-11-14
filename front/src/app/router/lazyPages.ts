@@ -78,6 +78,18 @@ export const SupplyDetailPageLazy = lazy(() =>
   })),
 )
 
+export const CustomersPageLazy = lazy(() =>
+  import('@/pages/admin/customers').then((module) => ({
+    default: module.CustomersPage,
+  })),
+)
+
+export const CustomerDetailPageLazy = lazy(() =>
+  import('@/pages/admin/customer-detail').then((module) => ({
+    default: module.CustomerDetailPage,
+  })),
+)
+
 export const NotFoundPageLazy = lazy(() =>
   import('@/pages/not-found').then((module) => ({
     default: module.NotFoundPage,

@@ -30,5 +30,6 @@ export const API_ENDPOINTS = {
   },
   customers: {
     list: v1('/customers'),
+    byId: (customerId: string) => v1(`/customers/${customerId}`),
   },
 } as const
