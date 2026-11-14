@@ -26,6 +26,7 @@ export const API_ENDPOINTS = {
     list: v1('/supplies'),
     byId: (supplyId: string) => v1(`/supplies/${supplyId}`),
     receive: (supplyId: string) => v1(`/supplies/${supplyId}/receive`),
+    cancel: (supplyId: string) => v1(`/supplies/${supplyId}/cancel`),
   },
   customers: {
     list: v1('/customers'),

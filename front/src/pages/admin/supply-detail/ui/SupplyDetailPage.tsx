@@ -18,6 +18,7 @@ import {
   type TSupplyItem,
   useSupplyDetail,
 } from '@/entities/supply'
+import { CancelSupplyButton } from '@/features/supply-cancel'
 import { SupplyReceiveForm } from '@/features/supply-receive'
 import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime, formatPrice } from '@/shared/lib'
@@ -75,13 +76,30 @@ const itemColumns: TableColumnsType<TSupplyItem> = [
     render: (price: number) => formatPrice(price),
   },
   {
-    title: 'Сумма',
+    title: 'Сумма по заказу',
     dataIndex: 'sum',
     align: 'right',
-    width: 130,
+    width: 140,
     render: (sum: number) => formatPrice(sum),
   },
+  {
+    title: 'Сумма принятого',
+    key: 'receivedSum',
+    align: 'right',
+    width: 140,
+    render: (_, item) =>
+      item.receivedQuantity === null
+        ? '—'
+        : formatPrice(item.receivedQuantity * item.purchasePrice),
+  },
 ]
+
+function getReceivedAmount(items: TSupplyItem[]) {
+  return items.reduce(
+    (sum, item) => sum + (item.receivedQuantity ?? 0) * item.purchasePrice,
+    0,
+  )
+}
 
 export function SupplyDetailPage() {
   const { supplyId = '' } = useParams<{ supplyId: string }>()
@@ -129,6 +147,9 @@ export function SupplyDetailPage() {
               Поставка №{supply.number}
             </Typography.Title>
             <SupplyStatusTag status={supply.status} />
+            {supply.status === 'Created' && (
+              <CancelSupplyButton supply={supply} onCancelled={replaceSupply} />
+            )}
           </Flex>
 
           <Card title="Поставка" className={styles['supply-detail__card']}>
@@ -166,6 +187,15 @@ export function SupplyDetailPage() {
                   label: 'Сумма по заказу',
                   children: formatPrice(supply.totalAmount),
                 },
+                ...(supply.status === 'Received'
+                  ? [
+                      {
+                        key: 'receivedTotal',
+                        label: 'Сумма принятого',
+                        children: formatPrice(getReceivedAmount(supply.items)),
+                      },
+                    ]
+                  : []),
                 {
                   key: 'comment',
                   label: 'Комментарий',
@@ -189,7 +219,26 @@ export function SupplyDetailPage() {
                 columns={itemColumns}
                 dataSource={supply.items}
                 pagination={false}
-                scroll={{ x: 850 }}
+                scroll={{ x: 1000 }}
+                summary={() =>
+                  supply.status === 'Received' && (
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} colSpan={6} align="right">
+                        <Typography.Text strong>Итого</Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={1} align="right">
+                        <Typography.Text strong>
+                          {formatPrice(supply.totalAmount)}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={2} align="right">
+                        <Typography.Text strong>
+                          {formatPrice(getReceivedAmount(supply.items))}
+                        </Typography.Text>
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  )
+                }
               />
             </Card>
           )}

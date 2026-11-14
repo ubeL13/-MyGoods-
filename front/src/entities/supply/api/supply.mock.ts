@@ -255,6 +255,16 @@ export function receiveSupplyMock(
       dto.items.map((item) => [item.productId, item.receivedQuantity]),
     )
 
+    const excess = supply.items.find(
+      (item) => (received.get(item.productId) ?? 0) > item.quantity,
+    )
+    if (excess) {
+      throw mockApiError(
+        400,
+        `Нельзя принять больше заказанного: «${excess.productName ?? excess.sku}» заказано ${excess.quantity} шт.`,
+      )
+    }
+
     const updated: TSupplyDto = {
       ...supply,
       status: 'Received',
@@ -264,6 +274,24 @@ export function receiveSupplyMock(
         receivedQuantity: received.get(item.productId) ?? 0,
       })),
     }
+    supplies = supplies.map((item) => (item.id === supplyId ? updated : item))
+
+    return updated
+  })
+}
+
+export function cancelSupplyMock(supplyId: string): Promise<TSupplyDto> {
+  return withDelay(() => {
+    const supply = findSupply(supplyId)
+
+    if (supply.status !== 'Created') {
+      throw mockApiError(
+        409,
+        `Поставка №${supply.number} уже ${supply.status === 'Received' ? 'принята' : 'отменена'}, отменить её нельзя.`,
+      )
+    }
+
+    const updated: TSupplyDto = { ...supply, status: 'Cancelled' }
     supplies = supplies.map((item) => (item.id === supplyId ? updated : item))
 
     return updated

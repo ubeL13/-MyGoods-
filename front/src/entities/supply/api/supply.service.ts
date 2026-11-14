@@ -14,6 +14,7 @@ import {
   mapSupplyDto,
 } from './supply.mapper'
 import {
+  cancelSupplyMock,
   createSupplyMock,
   getSuppliesMock,
   getSupplyByIdMock,
@@ -47,6 +48,12 @@ export async function receiveSupply(
   values: TSupplyReceiveValues,
 ): Promise<TSupply> {
   const data = await receiveSupplyMock(supplyId, values)
+
+  return mapSupplyDto(data)
+}
+
+export async function cancelSupply(supplyId: string): Promise<TSupply> {
+  const data = await cancelSupplyMock(supplyId)
 
   return mapSupplyDto(data)
 }

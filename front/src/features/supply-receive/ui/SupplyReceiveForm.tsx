@@ -27,11 +27,7 @@ type TSupplyReceiveFormProps = {
 function DiffText({ diff }: { diff: number }) {
   if (diff === 0) return <Typography.Text type="secondary">—</Typography.Text>
 
-  return (
-    <Typography.Text type={diff < 0 ? 'danger' : 'warning'}>
-      {diff > 0 ? `+${diff}` : diff} шт.
-    </Typography.Text>
-  )
+  return <Typography.Text type="danger">{diff} шт.</Typography.Text>
 }
 
 export function SupplyReceiveForm({
@@ -108,7 +104,7 @@ export function SupplyReceiveForm({
       render: (_, item) => (
         <InputNumber
           min={0}
-          max={100000}
+          max={item.quantity}
           precision={0}
           suffix="шт."
           value={receivedOf(item)}
@@ -181,8 +177,8 @@ export function SupplyReceiveForm({
       >
         <Typography.Text type={diffCount > 0 ? 'warning' : 'secondary'}>
           {diffCount > 0
-            ? `Расхождения в ${diffCount} поз. — проверьте перед подтверждением`
-            : 'Фактическое количество совпадает с заказом'}
+            ? `Недостача в ${diffCount} поз. — проверьте перед подтверждением`
+            : 'Фактическое количество совпадает с заказом. Принять больше заказанного нельзя.'}
         </Typography.Text>
 
         <Popconfirm
