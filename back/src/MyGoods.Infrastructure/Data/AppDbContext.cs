@@ -38,6 +38,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     /// Позиции заказов.
     /// </summary>
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    
+    /// <summary>
+    /// Поставщик товаров.
+    /// </summary>
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
         
     /// <summary>
     /// Настройка модели: ключи, обязательные поля, связи.
@@ -143,6 +148,44 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // Один и тот же товар не должен встречаться в одном заказе дважды отдельными строками
             entity.HasIndex(oi => new { oi.OrderId, oi.ProductId }).IsUnique();
+        });
+        
+        modelBuilder.Entity<Supplier>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            entity.Property(s => s.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            // Уникальный индекс
+            entity.HasIndex(s => s.Name)
+                .IsUnique();
+
+            entity.Property(s => s.Inn)
+                .HasMaxLength(12);
+
+            entity.Property(s => s.ContactPerson)
+                .HasMaxLength(200);
+            
+            entity.Property(s => s.Phone)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(s => s.Email)
+                .HasMaxLength(150);
+
+            entity.Property(s => s.Address)
+                .HasMaxLength(500);
+
+            entity.Property(s => s.IsActive)
+                .HasDefaultValue(true);
+        
+            // TODO после 10.01
+            // entity.HasMany(s => s.Supplies)
+            //     .WithOne(s => s.Supplier)
+            //     .HasForeignKey(s => s.SupplierId)
+            //     .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
