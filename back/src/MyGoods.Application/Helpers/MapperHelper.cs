@@ -1,7 +1,9 @@
 using MyGoods.Core.Entities;
+using MyGoods.Core.Enums;
 using MyGoods.Dto.Customers;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
+using MyGoods.Dto.Supplies;
 
 namespace MyGoods.Application.Helpers;
 
@@ -82,4 +84,35 @@ public static class MapperHelper
             item.Quantity,
             item.PriceAtOrder,
             item.PriceAtOrder * item.Quantity);
+
+    /// <summary>
+    /// Поставка → SupplyDto. Сумма принятого считается, только когда поставка принята.
+    /// </summary>
+    public static SupplyDto ToDto(Supply supply) =>
+        new(
+            supply.Id,
+            supply.Number,
+            supply.Status.ToString(),
+            supply.SupplierId,
+            supply.Supplier?.Name,
+            supply.Comment,
+            supply.TotalAmount,
+            supply.Status == SupplyStatus.Received
+                ? supply.Items.Sum(i => (i.ReceivedQuantity ?? 0) * i.PurchasePrice)
+                : null,
+            supply.CreatedAt,
+            supply.ReceivedAt,
+            supply.Items.Select(ToDto).ToList());
+
+    /// <summary>
+    /// Позиция поставки → SupplyItemDto.
+    /// </summary>
+    public static SupplyItemDto ToDto(SupplyItem item) =>
+        new(
+            item.ProductId,
+            item.Product?.Sku,
+            item.Product?.Name,
+            item.Quantity,
+            item.PurchasePrice,
+            item.ReceivedQuantity);
 }

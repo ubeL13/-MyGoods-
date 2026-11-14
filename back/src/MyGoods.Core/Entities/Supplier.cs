@@ -35,6 +35,6 @@ public class Supplier
     /// <summary>Дата и время последнего изменения (UTC).</summary>
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    // TODO 10.01
-    // public ICollection<Supply> Supplies { get; set; } = new List<Supply>();
+    /// <summary>Поставки, оформленные у поставщика.</summary>
+    public ICollection<Supply> Supplies { get; set; } = new List<Supply>();
 }
