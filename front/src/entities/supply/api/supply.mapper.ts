@@ -24,6 +24,7 @@ export function mapSupplyDto(dto: TSupplyDto): TSupply {
     expectedDate: dto.expectedDate,
     comment: dto.comment ?? '',
     totalAmount: dto.totalAmount,
+    receivedAmount: dto.receivedAmount,
     createdAt: dto.createdAt,
     receivedAt: dto.receivedAt,
     items: dto.items.map((item) => ({

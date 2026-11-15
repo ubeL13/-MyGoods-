@@ -20,6 +20,7 @@ export type TSupply = {
   expectedDate: string | null
   comment: string
   totalAmount: number
+  receivedAmount: number | null
   createdAt: string
   receivedAt: string | null
   items: TSupplyItem[]
