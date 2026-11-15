@@ -17,6 +17,7 @@ export type TSupplyDto = {
   expectedDate: string | null
   comment: string | null
   totalAmount: number
+  receivedAmount: number | null
   createdAt: string
   receivedAt: string | null
   items: TSupplyItemDto[]
