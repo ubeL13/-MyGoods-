@@ -26,12 +26,12 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
     }
 
     /// <inheritdoc />
-    public async Task<CustomerDto> GetById(Guid id)
+    public async Task<CustomerDetailsDto> GetById(Guid id)
     {
-        var customer = await customerRepository.Read(id)
-            ?? throw new NotFoundException($"Покупатель с id {id} не найден.");
+        var customer = await customerRepository.ReadWithOrders(id)
+                       ?? throw new NotFoundException($"Покупатель с id {id} не найден.");
 
-        return MapperHelper.ToDto(customer);
+        return MapperHelper.ToDetailsDto(customer);
     }
 
     /// <inheritdoc />

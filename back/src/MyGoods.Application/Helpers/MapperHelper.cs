@@ -151,4 +151,31 @@ public static class MapperHelper
             supplier.CreatedAt,
             supplier.UpdatedAt
         );
+    
+    /// <summary>
+    /// Покупатель с заказами → CustomerDetailsDto.
+    /// </summary>
+    public static CustomerDetailsDto ToDetailsDto(Customer customer)
+    {
+        // Сортируем заказы: новые сверху
+        var orders = customer.Orders
+            .OrderByDescending(o => o.CreatedAt)
+            .ThenByDescending(o => o.Number)
+            .ToList();
+
+        // Считаем сумму только неотменённых заказов
+        var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled).ToList();
+
+        return new CustomerDetailsDto(
+            customer.Id,
+            customer.Name,
+            customer.Phone,
+            customer.Email,
+            customer.Address,
+            customer.CreatedAt,
+            orders.Count,
+            activeOrders.Sum(o => o.TotalAmount),
+            orders.Select(ToListItemDto).ToList()
+        );
+    }
 }
