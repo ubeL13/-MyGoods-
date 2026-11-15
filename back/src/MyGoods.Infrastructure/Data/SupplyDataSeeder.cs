@@ -26,6 +26,11 @@ public static class SupplyDataSeeder
 
         var now = DateTime.UtcNow;
 
+        // Ищем поставщиков строго по имени, чтобы не зависеть от сортировки
+        var romashka = suppliers.First(s => s.Name == "ООО Ромашка");
+        var vasiliev = suppliers.First(s => s.Name == "ИП Васильев");
+        var technosnab = suppliers.First(s => s.Name == "ООО ТехноСнаб");
+
         var pPhone = products.First(p => p.Sku == "PHN-001");
         var pLaptop = products.First(p => p.Sku == "NB-001");
         var pTshirt = products.First(p => p.Sku == "TSH-001");
@@ -35,7 +40,7 @@ public static class SupplyDataSeeder
         var s1 = new Supply
         {
             Id = Guid.NewGuid(),
-            SupplierId = suppliers[0].Id, // ООО Ромашка
+            SupplierId = romashka.Id,
             Status = SupplyStatus.Created,
             ExpectedDate = DateOnly.FromDateTime(now.AddDays(5)),
             Comment = "Ожидаем поступление",
@@ -52,7 +57,7 @@ public static class SupplyDataSeeder
         var s2 = new Supply
         {
             Id = Guid.NewGuid(),
-            SupplierId = suppliers[1].Id, // ИП Васильев
+            SupplierId = vasiliev.Id,
             Status = SupplyStatus.Created,
             CreatedAt = now.AddDays(-1),
             Items = new List<SupplyItem>
@@ -66,7 +71,7 @@ public static class SupplyDataSeeder
         var s3 = new Supply
         {
             Id = Guid.NewGuid(),
-            SupplierId = suppliers[2].Id, // ООО ТехноСнаб
+            SupplierId = technosnab.Id,
             Status = SupplyStatus.Created, // Временно, изменим через ChangeStatus
             CreatedAt = now.AddDays(-10),
             Items = new List<SupplyItem>
@@ -87,7 +92,7 @@ public static class SupplyDataSeeder
         var s4 = new Supply
         {
             Id = Guid.NewGuid(),
-            SupplierId = suppliers[0].Id, // ООО Ромашка
+            SupplierId = romashka.Id,
             Status = SupplyStatus.Created,
             CreatedAt = now.AddDays(-5),
             Items = new List<SupplyItem>
@@ -108,7 +113,7 @@ public static class SupplyDataSeeder
         var s5 = new Supply
         {
             Id = Guid.NewGuid(),
-            SupplierId = suppliers[1].Id, // ИП Васильев
+            SupplierId = vasiliev.Id,
             Status = SupplyStatus.Cancelled,
             Comment = "Отменено поставщиком из-за отсутствия на складе",
             CreatedAt = now.AddDays(-8),
@@ -121,7 +126,13 @@ public static class SupplyDataSeeder
         s5.ChangeStatus(SupplyStatus.Cancelled);
         s5.CreatedAt = now.AddDays(-8);
 
-        db.Supplies.AddRange(s1, s2, s3, s4, s5);
-        await db.SaveChangesAsync();
+        // Сохраняем по одной в хронологическом порядке (от самой старой к новой),
+        // чтобы номера поставок шли по порядку: 1, 2, 3, 4, 5
+        var suppliesInOrder = new[] { s3, s5, s4, s1, s2 };
+        foreach (var supply in suppliesInOrder)
+        {
+            db.Supplies.Add(supply);
+            await db.SaveChangesAsync();
+        }
     }
 }
