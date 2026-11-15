@@ -1,0 +1,7 @@
+.supply-receive__input {
+  width: 100%;
+}
+
+.supply-receive__footer {
+  margin-top: var(--spacing-md);
+}

@@ -1,7 +1,7 @@
 import type { TableColumnsType } from 'antd'
 import { Alert, Button, Flex, Input, Table, Tabs, Typography } from 'antd'
 import dayjs from 'dayjs'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import {
   SUPPLY_STATUS_VIEW,
@@ -34,6 +34,9 @@ const columns: TableColumnsType<TSupplyListItem> = [
     title: '№',
     dataIndex: 'number',
     width: 80,
+    render: (number: number, supply) => (
+      <Link to={APP_ROUTES.supplyDetail(supply.id)}>{number}</Link>
+    ),
   },
   {
     title: 'Оформлена',

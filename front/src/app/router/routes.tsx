@@ -13,6 +13,7 @@ import {
   SuppliersPageLazy,
   SuppliesPageLazy,
   SupplyCreatePageLazy,
+  SupplyDetailPageLazy,
   WarehousePageLazy,
 } from '@/app/router/lazyPages'
 import { PageSuspense } from '@/app/router/PageSuspense'
@@ -96,6 +97,14 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <SupplyCreatePageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.supplyDetail,
+            element: (
+              <PageSuspense>
+                <SupplyDetailPageLazy />
               </PageSuspense>
             ),
           },

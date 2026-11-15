@@ -1,0 +1,7 @@
+.product-select__option {
+  min-width: 0;
+}
+
+.product-select__reason {
+  flex-shrink: 0;
+}

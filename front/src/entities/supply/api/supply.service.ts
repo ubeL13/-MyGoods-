@@ -5,6 +5,7 @@ import type {
   TSupply,
   TSupplyCreateValues,
   TSupplyListItem,
+  TSupplyReceiveValues,
 } from '../model/supply.types'
 
 import type { TSuppliesPageDto, TSupplyDto } from './supply.dto'
@@ -31,6 +32,34 @@ export async function createSupply(
   const { data } = await apiClient.post<TSupplyDto>(
     API_ENDPOINTS.supplies.list,
     values,
+  )
+
+  return mapSupplyDto(data)
+}
+
+export async function getSupplyById(supplyId: string): Promise<TSupply> {
+  const { data } = await apiClient.get<TSupplyDto>(
+    API_ENDPOINTS.supplies.byId(supplyId),
+  )
+
+  return mapSupplyDto(data)
+}
+
+export async function receiveSupply(
+  supplyId: string,
+  values: TSupplyReceiveValues,
+): Promise<TSupply> {
+  const { data } = await apiClient.post<TSupplyDto>(
+    API_ENDPOINTS.supplies.receive(supplyId),
+    values,
+  )
+
+  return mapSupplyDto(data)
+}
+
+export async function cancelSupply(supplyId: string): Promise<TSupply> {
+  const { data } = await apiClient.post<TSupplyDto>(
+    API_ENDPOINTS.supplies.cancel(supplyId),
   )
 
   return mapSupplyDto(data)
