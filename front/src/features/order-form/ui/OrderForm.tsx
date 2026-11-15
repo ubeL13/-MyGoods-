@@ -13,13 +13,12 @@ import { useState } from 'react'
 
 import type { TCustomer } from '@/entities/customer'
 import type { TOrderCreateValues } from '@/entities/order'
-import type { TProductListItem } from '@/entities/product'
+import { ProductSelect, type TProductListItem } from '@/entities/product'
 import { formatPrice, getApiErrorMessage, isConflictError } from '@/shared/lib'
 
 import type { TOrderFormValues } from '../model/orderForm.types'
 
 import { CustomerSelect } from './CustomerSelect'
-import { ProductSelect } from './ProductSelect'
 
 import styles from './orderForm.module.css'
 
@@ -220,6 +219,7 @@ export function OrderForm({ onSubmit, onCancel }: TOrderFormProps) {
                         selectedProduct={product}
                         takenIds={takenIds}
                         onSelectProduct={rememberProduct}
+                        isProductDisabled={(item) => item.available <= 0}
                       />
                     </Form.Item>
 

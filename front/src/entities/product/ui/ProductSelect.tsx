@@ -1,9 +1,9 @@
 import { Select } from 'antd'
 import { useState } from 'react'
 
-import type { TProductListItem } from '@/entities/product'
 import { formatPrice } from '@/shared/lib'
 
+import type { TProductListItem } from '../model/product.types'
 import { useProductOptions } from '../model/useProductOptions'
 
 type TProductSelectProps = {
@@ -12,6 +12,7 @@ type TProductSelectProps = {
   selectedProduct?: TProductListItem
   takenIds: string[]
   onSelectProduct: (product: TProductListItem) => void
+  isProductDisabled?: (product: TProductListItem) => boolean
 }
 
 export function ProductSelect({
@@ -20,6 +21,7 @@ export function ProductSelect({
   selectedProduct,
   takenIds,
   onSelectProduct,
+  isProductDisabled,
 }: TProductSelectProps) {
   const [search, setSearch] = useState('')
   const { products, isLoading } = useProductOptions(search)
@@ -49,7 +51,7 @@ export function ProductSelect({
         label: `${product.name} · ${product.sku} · ${formatPrice(product.price)}`,
         disabled:
           !product.isActive ||
-          product.available <= 0 ||
+          (isProductDisabled?.(product) ?? false) ||
           (product.id !== value && takenIds.includes(product.id)),
       }))}
     />

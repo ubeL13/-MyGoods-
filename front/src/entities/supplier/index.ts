@@ -10,3 +10,5 @@ export type {
   TSuppliersFilters,
   TSuppliersQuery,
 } from './model/supplier.types'
+export { useSupplierOptions } from './model/useSupplierOptions'
+export { SupplierSelect } from './ui/SupplierSelect'
