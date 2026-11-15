@@ -4,6 +4,7 @@ using MyGoods.Dto.Customers;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
 using MyGoods.Dto.Supplies;
+using MyGoods.Dto.Suppliers;
 
 namespace MyGoods.Application.Helpers;
 
@@ -133,4 +134,21 @@ public static class MapperHelper
             supply.TotalAmount,
             supply.CreatedAt,
             supply.ReceivedAt);
+    
+    /// <summary>
+    /// Поставщик → SupplierDto.
+    /// </summary>
+    public static SupplierDto ToDto(Supplier supplier) =>
+        new(
+            supplier.Id,
+            supplier.Name,
+            supplier.Inn,
+            supplier.ContactPerson,
+            supplier.Phone,
+            supplier.Email,
+            supplier.Address,
+            supplier.IsActive,
+            supplier.CreatedAt,
+            supplier.UpdatedAt
+        );
 }
