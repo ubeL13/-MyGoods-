@@ -12,9 +12,13 @@ namespace MyGoods.Infrastructure.Repositories;
 public class SupplierRepository(AppDbContext dbContext) : Repository<Supplier>(dbContext), ISupplierRepository
 {
     /// <inheritdoc />
-    public async Task<(List<Supplier> Items, int Total)> Search(string? search, int page, int limit)
+    public async Task<(List<Supplier> Items, int Total)> Search(string? search, bool? isActive, int page, int limit)
     {
         var query = Set.AsQueryable();
+
+        // Фильтр по вкладкам "Активные / Архив"
+        if (isActive.HasValue)
+            query = query.Where(s => s.IsActive == isActive.Value);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -22,11 +26,14 @@ public class SupplierRepository(AppDbContext dbContext) : Repository<Supplier>(d
             var pattern = $"%{text}%";
             var digits = new string(text.Where(char.IsDigit).ToArray());
 
-            // Ищем по названию, ИНН или телефону (только цифры)
-            query = query.Where(s => 
-                EF.Functions.ILike(s.Name, pattern) || 
-                (s.Inn != null && s.Inn.Contains(digits)) ||
-                (s.Phone != null && s.Phone.Contains(digits)));
+            // Исправленный поиск: если цифр нет, ищем только по имени и контактному лицу
+            query = digits.Length > 0
+                ? query.Where(s => EF.Functions.ILike(s.Name, pattern)
+                                   || (s.ContactPerson != null && EF.Functions.ILike(s.ContactPerson, pattern))
+                                   || (s.Inn != null && s.Inn.Contains(digits))
+                                   || s.Phone.Contains(digits))
+                : query.Where(s => EF.Functions.ILike(s.Name, pattern)
+                                   || (s.ContactPerson != null && EF.Functions.ILike(s.ContactPerson, pattern)));
         }
 
         var total = await query.CountAsync();
@@ -42,16 +49,14 @@ public class SupplierRepository(AppDbContext dbContext) : Repository<Supplier>(d
         return (items, total);
     }
 
-    /// <inheritdoc />
     public async Task<bool> NameExists(string name, Guid? excludeId = null)
     {
-        // ILike делает проверку без учета регистра
-        var query = Set.Where(s => EF.Functions.ILike(s.Name, name));
+        // Исправление ложного дубля (без учета регистра, без трактовки _ и % как шаблонов)
+        var lower = name.ToLower();
+        var query = Set.Where(s => s.Name.ToLower() == lower);
 
         if (excludeId.HasValue)
-        {
             query = query.Where(s => s.Id != excludeId.Value);
-        }
 
         return await query.AnyAsync();
     }

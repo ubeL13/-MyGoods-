@@ -87,9 +87,6 @@ public static class MapperHelper
     /// <summary>
     /// Поставщик → SupplierDto.
     /// </summary>
-    /// <summary>
-    /// Поставщик → SupplierDto.
-    /// </summary>
     public static SupplierDto ToDto(Supplier supplier) =>
         new(
             supplier.Id,

@@ -61,15 +61,13 @@ public class SuppliersController(ISupplierService supplierService) : ControllerB
         Ok(await supplierService.Update(id, dto));
 
     /// <summary>
-    /// Архивирует поставщика (IsActive = false). Удалить поставщика нельзя.
+    /// Архивирует или возвращает из архива поставщика.
     /// </summary>
     /// <param name="id">Идентификатор поставщика</param>
-    [HttpPatch("{id:guid}/archive")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    /// <param name="dto">Новый статус активности</param>
+    [HttpPatch("{id:guid}/active")]
+    [ProducesResponseType<SupplierDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Archive(Guid id)
-    {
-        await supplierService.Archive(id);
-        return NoContent();
-    }
+    public async Task<ActionResult<SupplierDto>> SetActive(Guid id, SupplierActiveDto dto) =>
+        Ok(await supplierService.SetActive(id, dto.IsActive));
 }

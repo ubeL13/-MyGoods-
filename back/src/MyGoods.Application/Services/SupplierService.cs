@@ -17,7 +17,8 @@ public class SupplierService(ISupplierRepository supplierRepository) : ISupplier
     /// <inheritdoc />
     public async Task<PagedResult<SupplierDto>> GetList(SupplierQueryDto query)
     {
-        var (items, total) = await supplierRepository.Search(query.Search, query.Page, query.Limit);
+        // фильтр по вкладкам "Активные / Архив"
+        var (items, total) = await supplierRepository.Search(query.Search, query.IsActive, query.Page, query.Limit);
 
         var totalPages = (int)Math.Ceiling(total / (double)query.Limit);
         return new PagedResult<SupplierDto>(
@@ -91,14 +92,16 @@ public class SupplierService(ISupplierRepository supplierRepository) : ISupplier
     }
 
     /// <inheritdoc />
-    public async Task Archive(Guid id)
+    public async Task<SupplierDto> SetActive(Guid id, bool isActive)
     {
         var supplier = await supplierRepository.Read(id)
             ?? throw new NotFoundException($"Поставщик с id {id} не найден.");
 
-        supplier.IsActive = false;
+        supplier.IsActive = isActive;
         supplier.UpdatedAt = DateTime.UtcNow;
 
         await supplierRepository.Update(supplier);
+        
+        return MapperHelper.ToDto(supplier); 
     }
 }

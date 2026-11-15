@@ -36,5 +36,6 @@ public interface ISupplierService
     /// Архивирует поставщика (IsActive = false).
     /// </summary>
     /// <param name="id">Идентификатор поставщика</param>
-    Task Archive(Guid id);
+    /// <param name="isActive">Новый статус активности</param>
+    Task<SupplierDto> SetActive(Guid id, bool isActive);
 }

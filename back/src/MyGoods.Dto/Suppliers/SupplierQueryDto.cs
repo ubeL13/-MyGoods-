@@ -24,4 +24,9 @@ public class SupplierQueryDto
     /// </summary>
     [Range(1, 100, ErrorMessage = "На странице от 1 до 100 поставщиков.")]
     public int Limit { get; set; } = 20;
+    
+    /// <summary>
+    /// Фильтр по активности: true — активные, false — архив, null — все.
+    /// </summary>
+    public bool? IsActive { get; set; }
 }
