@@ -94,13 +94,6 @@ const itemColumns: TableColumnsType<TSupplyItem> = [
   },
 ]
 
-function getReceivedAmount(items: TSupplyItem[]) {
-  return items.reduce(
-    (sum, item) => sum + (item.receivedQuantity ?? 0) * item.purchasePrice,
-    0,
-  )
-}
-
 export function SupplyDetailPage() {
   const { supplyId = '' } = useParams<{ supplyId: string }>()
   const navigate = useNavigate()
@@ -192,7 +185,7 @@ export function SupplyDetailPage() {
                       {
                         key: 'receivedTotal',
                         label: 'Сумма принятого',
-                        children: formatPrice(getReceivedAmount(supply.items)),
+                        children: formatPrice(supply.receivedAmount ?? 0),
                       },
                     ]
                   : []),
@@ -233,7 +226,7 @@ export function SupplyDetailPage() {
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={2} align="right">
                         <Typography.Text strong>
-                          {formatPrice(getReceivedAmount(supply.items))}
+                          {formatPrice(supply.receivedAmount ?? 0)}
                         </Typography.Text>
                       </Table.Summary.Cell>
                     </Table.Summary.Row>
