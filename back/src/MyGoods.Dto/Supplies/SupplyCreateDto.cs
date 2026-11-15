@@ -14,6 +14,11 @@ public class SupplyCreateDto
     public Guid? SupplierId { get; set; }
 
     /// <summary>
+    /// Ожидаемая дата поступления (не раньше сегодняшней), например "2026-11-20".
+    /// </summary>
+    public DateOnly? ExpectedDate { get; set; }
+
+    /// <summary>
     /// Комментарий к поставке.
     /// </summary>
     [MaxLength(500, ErrorMessage = "Комментарий не длиннее 500 символов.")]

@@ -1,4 +1,5 @@
 using MyGoods.Core.Entities;
+using MyGoods.Core.Enums;
 
 namespace MyGoods.Core.Repositories;
 
@@ -7,6 +8,17 @@ namespace MyGoods.Core.Repositories;
 /// </summary>
 public interface ISupplyRepository : IRepository<Supply>
 {
+    /// <summary>
+    /// Список поставок с фильтрами, поиском и пагинацией; новые сверху. Фильтрация выполняется в базе.
+    /// </summary>
+    /// <param name="status">Статус (необязательно)</param>
+    /// <param name="supplierId">Поставщик (необязательно)</param>
+    /// <param name="search">Номер поставки или часть названия поставщика (необязательно)</param>
+    /// <param name="page">Номер страницы (с 1)</param>
+    /// <param name="limit">Поставок на странице</param>
+    /// <returns>Поставки страницы и общее количество найденных</returns>
+    Task<(List<Supply> Items, int Total)> Search(SupplyStatus? status, Guid? supplierId, string? search, int page, int limit);
+
     /// <summary>
     /// В одной транзакции переводит поставку из «Оформлена» в «Принята», увеличивает остатки товаров
     /// на принятое количество и сохраняет принятое количество в позициях.
