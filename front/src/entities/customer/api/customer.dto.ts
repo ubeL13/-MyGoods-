@@ -33,6 +33,6 @@ export type TCustomerOrderDto = {
 
 export type TCustomerDetailDto = TCustomerDto & {
   ordersCount: number
-  totalSpent: number
+  ordersTotal: number
   orders: TCustomerOrderDto[]
 }

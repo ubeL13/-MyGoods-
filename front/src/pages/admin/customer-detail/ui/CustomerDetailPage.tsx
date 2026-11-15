@@ -99,7 +99,7 @@ export function CustomerDetailPage() {
               <Statistic title="Заказов" value={customer.ordersCount} />
               <Statistic
                 title="Сумма покупок"
-                value={formatPrice(customer.totalSpent)}
+                value={formatPrice(customer.ordersTotal)}
               />
             </Flex>
             <Typography.Text type="secondary">

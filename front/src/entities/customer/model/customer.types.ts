@@ -19,7 +19,7 @@ export type TCustomerOrder = {
 
 export type TCustomerDetail = TCustomer & {
   ordersCount: number
-  totalSpent: number
+  ordersTotal: number
   orders: TCustomerOrder[]
 }
 

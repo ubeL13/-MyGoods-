@@ -6,14 +6,13 @@ import type {
   TCustomersQuery,
 } from '../model/customer.types'
 
-import type { TCustomersPageDto } from './customer.dto'
+import type { TCustomerDetailDto, TCustomersPageDto } from './customer.dto'
 import {
   mapCustomerDetailDto,
   mapCustomerDto,
   mapCustomersPageDto,
   mapCustomersQuery,
 } from './customer.mapper'
-import { getCustomerDetailMock } from './customer.mock'
 
 const SEARCH_LIMIT = 20
 
@@ -40,7 +39,9 @@ export async function getCustomers(
 export async function getCustomerById(
   customerId: string,
 ): Promise<TCustomerDetail> {
-  const data = await getCustomerDetailMock(customerId)
+  const { data } = await apiClient.get<TCustomerDetailDto>(
+    API_ENDPOINTS.customers.byId(customerId),
+  )
 
   return mapCustomerDetailDto(data)
 }

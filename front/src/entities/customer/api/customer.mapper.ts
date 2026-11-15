@@ -47,7 +47,7 @@ export function mapCustomerDetailDto(dto: TCustomerDetailDto): TCustomerDetail {
   return {
     ...mapCustomerDto(dto),
     ordersCount: dto.ordersCount,
-    totalSpent: dto.totalSpent,
+    ordersTotal: dto.ordersTotal,
     orders: dto.orders.map((order) => ({
       id: order.id,
       number: order.number,
