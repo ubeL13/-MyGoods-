@@ -1,4 +1,4 @@
-import type { TPaginatedResponse } from '@/shared/api'
+import { API_ENDPOINTS, apiClient, type TPaginatedResponse } from '@/shared/api'
 
 import type {
   TSuppliesQuery,
@@ -8,23 +8,20 @@ import type {
   TSupplyReceiveValues,
 } from '../model/supply.types'
 
+import type { TSuppliesPageDto, TSupplyDto } from './supply.dto'
 import {
   mapSuppliesPageDto,
   mapSuppliesQuery,
   mapSupplyDto,
 } from './supply.mapper'
-import {
-  cancelSupplyMock,
-  createSupplyMock,
-  getSuppliesMock,
-  getSupplyByIdMock,
-  receiveSupplyMock,
-} from './supply.mock'
 
 export async function getSupplies(
   query: TSuppliesQuery,
 ): Promise<TPaginatedResponse<TSupplyListItem>> {
-  const data = await getSuppliesMock(mapSuppliesQuery(query))
+  const { data } = await apiClient.get<TSuppliesPageDto>(
+    API_ENDPOINTS.supplies.list,
+    { params: mapSuppliesQuery(query) },
+  )
 
   return mapSuppliesPageDto(data)
 }
@@ -32,13 +29,18 @@ export async function getSupplies(
 export async function createSupply(
   values: TSupplyCreateValues,
 ): Promise<TSupply> {
-  const data = await createSupplyMock(values)
+  const { data } = await apiClient.post<TSupplyDto>(
+    API_ENDPOINTS.supplies.list,
+    values,
+  )
 
   return mapSupplyDto(data)
 }
 
 export async function getSupplyById(supplyId: string): Promise<TSupply> {
-  const data = await getSupplyByIdMock(supplyId)
+  const { data } = await apiClient.get<TSupplyDto>(
+    API_ENDPOINTS.supplies.byId(supplyId),
+  )
 
   return mapSupplyDto(data)
 }
@@ -47,13 +49,18 @@ export async function receiveSupply(
   supplyId: string,
   values: TSupplyReceiveValues,
 ): Promise<TSupply> {
-  const data = await receiveSupplyMock(supplyId, values)
+  const { data } = await apiClient.post<TSupplyDto>(
+    API_ENDPOINTS.supplies.receive(supplyId),
+    values,
+  )
 
   return mapSupplyDto(data)
 }
 
 export async function cancelSupply(supplyId: string): Promise<TSupply> {
-  const data = await cancelSupplyMock(supplyId)
+  const { data } = await apiClient.post<TSupplyDto>(
+    API_ENDPOINTS.supplies.cancel(supplyId),
+  )
 
   return mapSupplyDto(data)
 }
