@@ -5,6 +5,7 @@ import { API_ENDPOINTS, apiClient } from '@/shared/api'
 import type {
   TWriteOffCreateDto,
   TWriteOffDto,
+  TWriteOffRejectDto,
   TWriteOffsPageDto,
   TWriteOffsQueryDto,
 } from './writeOff.dto'
@@ -163,5 +164,86 @@ export async function createWriteOffMock(
     writeOffs = [writeOff, ...writeOffs]
 
     return writeOff
+  })
+}
+
+function findWriteOff(writeOffId: string): TWriteOffDto {
+  const writeOff = writeOffs.find((item) => item.id === writeOffId)
+  if (!writeOff) throw mockApiError(404, 'Заявка на списание не найдена')
+  return writeOff
+}
+
+function assertPending(writeOff: TWriteOffDto) {
+  if (writeOff.status !== 'Pending') {
+    throw mockApiError(
+      409,
+      `Заявка №${writeOff.number} уже ${writeOff.status === 'Approved' ? 'одобрена' : 'отклонена'}.`,
+    )
+  }
+}
+
+function replaceWriteOff(updated: TWriteOffDto): TWriteOffDto {
+  writeOffs = writeOffs.map((item) => (item.id === updated.id ? updated : item))
+  return updated
+}
+
+async function loadAvailable(productId: string): Promise<number | null> {
+  try {
+    const { data } = await apiClient.get<{
+      stock: { available: number } | null
+    }>(API_ENDPOINTS.products.byId(productId))
+    return data.stock?.available ?? 0
+  } catch {
+    return null
+  }
+}
+
+export function getWriteOffByIdMock(writeOffId: string): Promise<TWriteOffDto> {
+  return withDelay(() => findWriteOff(writeOffId))
+}
+
+export async function approveWriteOffMock(
+  writeOffId: string,
+): Promise<TWriteOffDto> {
+  const writeOff = writeOffs.find((item) => item.id === writeOffId)
+  const available = writeOff ? await loadAvailable(writeOff.productId) : null
+
+  return withDelay(() => {
+    const current = findWriteOff(writeOffId)
+    assertPending(current)
+
+    if (available !== null && current.quantity > available) {
+      throw mockApiError(
+        409,
+        `Нельзя одобрить: доступно только ${available} шт. «${current.productName}», остальное в резерве под заказы.`,
+      )
+    }
+
+    return replaceWriteOff({
+      ...current,
+      status: 'Approved',
+      reviewedAt: new Date().toISOString(),
+    })
+  })
+}
+
+export function rejectWriteOffMock(
+  writeOffId: string,
+  dto: TWriteOffRejectDto,
+): Promise<TWriteOffDto> {
+  return withDelay(() => {
+    const current = findWriteOff(writeOffId)
+    assertPending(current)
+
+    if (!dto.reason.trim()) {
+      throw mockApiError(400, 'Укажите причину отклонения.')
+    }
+
+    return replaceWriteOff({
+      ...current,
+      status: 'Rejected',
+      reviewedAt: new Date().toISOString(),
+      rejectionReason: dto.reason.trim(),
+    })
   })
 }

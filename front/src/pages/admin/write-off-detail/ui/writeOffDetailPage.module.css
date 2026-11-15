@@ -1,0 +1,16 @@
+.write-off-detail__back {
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.write-off-detail__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.write-off-detail__title {
+  margin: 0;
+}
+
+.write-off-detail__card {
+  margin-bottom: var(--spacing-md);
+}
