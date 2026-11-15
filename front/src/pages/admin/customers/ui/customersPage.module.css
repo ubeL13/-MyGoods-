@@ -1,0 +1,12 @@
+.customers-page__title {
+  margin-top: 0;
+}
+
+.customers-page__search {
+  max-width: 360px;
+  margin-bottom: var(--spacing-md);
+}
+
+.customers-page__error {
+  margin-bottom: var(--spacing-md);
+}

@@ -120,7 +120,11 @@ export function OrderDetailPage() {
                 {
                   key: 'customer',
                   label: 'Покупатель',
-                  children: order.customerName,
+                  children: (
+                    <Link to={APP_ROUTES.customerDetail(order.customerId)}>
+                      {order.customerName}
+                    </Link>
+                  ),
                 },
                 {
                   key: 'phone',

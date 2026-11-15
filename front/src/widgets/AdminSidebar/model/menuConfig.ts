@@ -37,6 +37,11 @@ export const ADMIN_MENU_GROUPS: TAdminMenuGroup[] = [
         label: 'Заказы',
         path: APP_ROUTES.orders,
       },
+      {
+        key: 'customers',
+        label: 'Покупатели',
+        path: APP_ROUTES.customers,
+      },
     ],
   },
   {
