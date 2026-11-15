@@ -1,0 +1,19 @@
+.suppliers-page__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.suppliers-page__title {
+  margin: 0;
+}
+
+.suppliers-page__filters {
+  margin-bottom: var(--spacing-md);
+}
+
+.suppliers-page__search {
+  max-width: 360px;
+}
+
+.suppliers-page__error {
+  margin-bottom: var(--spacing-md);
+}

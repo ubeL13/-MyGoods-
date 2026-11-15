@@ -1,0 +1,8 @@
+.supplier-form__error {
+  margin-bottom: var(--spacing-md);
+}
+
+.supplier-form__grow {
+  flex: 1;
+  min-width: 0;
+}
