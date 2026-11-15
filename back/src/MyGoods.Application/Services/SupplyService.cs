@@ -3,6 +3,7 @@ using MyGoods.Application.Helpers;
 using MyGoods.Core.Entities;
 using MyGoods.Core.Enums;
 using MyGoods.Core.Repositories;
+using MyGoods.Dto;
 using MyGoods.Dto.Services;
 using MyGoods.Dto.Supplies;
 
@@ -20,6 +21,19 @@ public class SupplyService(
     IProductRepository productRepository) : ISupplyService
 {
     /// <inheritdoc />
+    public async Task<PagedResult<SupplyListItemDto>> GetList(SupplyQueryDto query)
+    {
+        SupplyStatus? status = query.Status == null ? null : Enum.Parse<SupplyStatus>(query.Status);
+        var (items, total) = await supplyRepository.Search(
+            status, query.SupplierId, query.Search, query.Page, query.Limit);
+
+        var totalPages = (int)Math.Ceiling(total / (double)query.Limit);
+        return new PagedResult<SupplyListItemDto>(
+            items.Select(MapperHelper.ToListItemDto).ToList(),
+            new PageMeta(query.Page, query.Limit, total, totalPages));
+    }
+
+    /// <inheritdoc />
     public async Task<SupplyDto> GetById(Guid id) =>
         MapperHelper.ToDto(await GetSupply(id));
 
@@ -36,10 +50,16 @@ public class SupplyService(
         if (!supplier.IsActive)
             throw new ValidationException($"Поставщик «{supplier.Name}» в архиве — у него нельзя оформить поставку.");
 
+        // Сравниваем с датой по UTC: у пользователей в часовых поясах восточнее Москвы и самой Москвы
+        // «сегодня» по местному времени никогда не раньше, чем по UTC
+        if (dto.ExpectedDate < DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new ValidationException("Ожидаемая дата поставки не может быть в прошлом.");
+
         var supply = new Supply
         {
             SupplierId = supplier.Id,
             Supplier = supplier,
+            ExpectedDate = dto.ExpectedDate,
             Comment = string.IsNullOrWhiteSpace(dto.Comment) ? null : dto.Comment.Trim(),
             Status = SupplyStatus.Created,
             CreatedAt = DateTime.UtcNow

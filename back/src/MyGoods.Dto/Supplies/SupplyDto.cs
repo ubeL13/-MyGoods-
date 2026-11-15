@@ -8,6 +8,7 @@ namespace MyGoods.Dto.Supplies;
 /// <param name="Status">Статус: Created, Received, Cancelled</param>
 /// <param name="SupplierId">Идентификатор поставщика</param>
 /// <param name="SupplierName">Название поставщика</param>
+/// <param name="ExpectedDate">Ожидаемая дата поступления</param>
 /// <param name="Comment">Комментарий</param>
 /// <param name="TotalAmount">Сумма по заказанному количеству</param>
 /// <param name="ReceivedAmount">Сумма по принятому количеству (пусто, пока не принята)</param>
@@ -20,6 +21,7 @@ public record SupplyDto(
     string Status,
     Guid SupplierId,
     string? SupplierName,
+    DateOnly? ExpectedDate,
     string? Comment,
     decimal TotalAmount,
     decimal? ReceivedAmount,
@@ -36,10 +38,12 @@ public record SupplyDto(
 /// <param name="Quantity">Заказанное количество</param>
 /// <param name="PurchasePrice">Закупочная цена за единицу</param>
 /// <param name="ReceivedQuantity">Принятое количество (пусто, пока не принята)</param>
+/// <param name="Sum">Сумма по позиции: заказанное количество × закупочная цена</param>
 public record SupplyItemDto(
     Guid ProductId,
     string? Sku,
     string? ProductName,
     int Quantity,
     decimal PurchasePrice,
-    int? ReceivedQuantity);
+    int? ReceivedQuantity,
+    decimal Sum);

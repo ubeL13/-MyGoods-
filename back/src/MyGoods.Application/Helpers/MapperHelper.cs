@@ -95,6 +95,7 @@ public static class MapperHelper
             supply.Status.ToString(),
             supply.SupplierId,
             supply.Supplier?.Name,
+            supply.ExpectedDate,
             supply.Comment,
             supply.TotalAmount,
             supply.Status == SupplyStatus.Received
@@ -114,5 +115,22 @@ public static class MapperHelper
             item.Product?.Name,
             item.Quantity,
             item.PurchasePrice,
-            item.ReceivedQuantity);
+            item.ReceivedQuantity,
+            item.PurchasePrice * item.Quantity);
+
+    /// <summary>
+    /// Поставка → строка списка поставок.
+    /// </summary>
+    public static SupplyListItemDto ToListItemDto(Supply supply) =>
+        new(
+            supply.Id,
+            supply.Number,
+            supply.Status.ToString(),
+            supply.SupplierId,
+            supply.Supplier?.Name,
+            supply.ExpectedDate,
+            supply.Items.Count,
+            supply.TotalAmount,
+            supply.CreatedAt,
+            supply.ReceivedAt);
 }

@@ -8,6 +8,12 @@ namespace MyGoods.Dto.Services;
 public interface ISupplyService
 {
     /// <summary>
+    /// Список поставок с фильтром по статусу и поставщику, поиском и пагинацией; новые сверху.
+    /// </summary>
+    /// <param name="query">Параметры списка</param>
+    Task<PagedResult<SupplyListItemDto>> GetList(SupplyQueryDto query);
+
+    /// <summary>
     /// Поставка по идентификатору — с поставщиком и позициями. Если нет — NotFoundException (404).
     /// </summary>
     /// <param name="id">Идентификатор поставки</param>

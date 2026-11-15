@@ -24,6 +24,44 @@ public class SupplyRepository(AppDbContext dbContext) : Repository<Supply>(dbCon
             .FirstOrDefaultAsync(s => s.Id == id);
 
     /// <inheritdoc />
+    public async Task<(List<Supply> Items, int Total)> Search(
+        SupplyStatus? status, Guid? supplierId, string? search, int page, int limit)
+    {
+        var query = Set.AsQueryable();
+
+        if (status.HasValue)
+            query = query.Where(s => s.Status == status.Value);
+
+        if (supplierId.HasValue)
+            query = query.Where(s => s.SupplierId == supplierId.Value);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var text = search.Trim();
+            var pattern = $"%{text}%";
+
+            // Число — это номер поставки, но может быть и частью названия («Склад 24»)
+            query = int.TryParse(text, out var number)
+                ? query.Where(s => s.Number == number || EF.Functions.ILike(s.Supplier!.Name, pattern))
+                : query.Where(s => EF.Functions.ILike(s.Supplier!.Name, pattern));
+        }
+
+        var total = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(s => s.CreatedAt)
+            .ThenByDescending(s => s.Number)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .Include(s => s.Supplier)
+            .Include(s => s.Items)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return (items, total);
+    }
+
+    /// <inheritdoc />
     public async Task<bool> SaveReceived(Supply supply)
     {
         await using var transaction = await DbContext.Database.BeginTransactionAsync();

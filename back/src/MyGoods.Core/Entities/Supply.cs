@@ -20,6 +20,9 @@ public class Supply
     /// <summary>Статус поставки.</summary>
     public SupplyStatus Status { get; set; } = SupplyStatus.Created;
 
+    /// <summary>Ожидаемая дата поступления товара на склад.</summary>
+    public DateOnly? ExpectedDate { get; set; }
+
     /// <summary>Комментарий к поставке.</summary>
     public string? Comment { get; set; }
 
