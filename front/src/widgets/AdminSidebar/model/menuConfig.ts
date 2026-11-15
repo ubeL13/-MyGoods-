@@ -63,6 +63,11 @@ export const ADMIN_MENU_GROUPS: TAdminMenuGroup[] = [
         label: 'Поставщики',
         path: APP_ROUTES.suppliers,
       },
+      {
+        key: 'write-offs',
+        label: 'Списания',
+        path: APP_ROUTES.writeOffs,
+      },
     ],
   },
 ]

@@ -1,0 +1,23 @@
+.write-offs-page__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.write-offs-page__title {
+  margin: 0;
+}
+
+.write-offs-page__filters {
+  margin-bottom: var(--spacing-md);
+}
+
+.write-offs-page__search {
+  max-width: 360px;
+}
+
+.write-offs-page__reason {
+  width: 200px;
+}
+
+.write-offs-page__error {
+  margin-bottom: var(--spacing-md);
+}
