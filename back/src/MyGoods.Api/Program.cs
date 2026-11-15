@@ -72,6 +72,9 @@ if (app.Environment.IsDevelopment())
         
         await CustomerDataSeeder.SeedAsync(db);
         await OrderDataSeeder.SeedAsync(db);
+        
+        await SupplierDataSeeder.SeedAsync(db);
+        await SupplyDataSeeder.SeedAsync(db);
     }
 }
 
