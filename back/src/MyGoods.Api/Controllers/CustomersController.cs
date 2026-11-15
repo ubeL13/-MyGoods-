@@ -24,16 +24,6 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         Ok(await customerService.GetList(query));
 
     /// <summary>
-    /// Покупатель по идентификатору.
-    /// </summary>
-    /// <param name="id">Идентификатор покупателя</param>
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType<CustomerDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CustomerDto>> GetById(Guid id) =>
-        Ok(await customerService.GetById(id));
-
-    /// <summary>
     /// Создаёт покупателя. Телефон должен быть уникальным.
     /// </summary>
     /// <param name="dto">Данные покупателя</param>
@@ -46,4 +36,14 @@ public class CustomersController(ICustomerService customerService) : ControllerB
         var customer = await customerService.Create(dto);
         return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
     }
+    
+    /// <summary>
+    /// Карточка покупателя с его заказами (новые сверху) и статистикой.
+    /// </summary>
+    /// <param name="id">Идентификатор покупателя</param>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<CustomerDetailsDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerDetailsDto>> GetById(Guid id) =>
+        Ok(await customerService.GetById(id));
 }
