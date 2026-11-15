@@ -49,6 +49,7 @@ public class SupplierRepository(AppDbContext dbContext) : Repository<Supplier>(d
         return (items, total);
     }
 
+    /// <inheritdoc />
     public async Task<bool> NameExists(string name, Guid? excludeId = null)
     {
         // Исправление ложного дубля (без учета регистра, без трактовки _ и % как шаблонов)
