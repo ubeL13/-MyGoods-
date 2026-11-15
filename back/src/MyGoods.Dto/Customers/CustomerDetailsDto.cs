@@ -12,7 +12,7 @@ namespace MyGoods.Dto.Customers;
 /// <param name="Address">Адрес</param>
 /// <param name="CreatedAt">Дата создания (UTC)</param>
 /// <param name="OrdersCount">Общее количество заказов</param>
-/// <param name="TotalOrdersAmount">Общая сумма неотменённых заказов</param>
+/// <param name="OrdersTotal">Общая сумма неотменённых заказов</param>
 /// <param name="Orders">Список заказов (новые сверху)</param>
 public record CustomerDetailsDto(
     Guid Id,
@@ -22,5 +22,5 @@ public record CustomerDetailsDto(
     string? Address,
     DateTime CreatedAt,
     int OrdersCount,
-    decimal TotalOrdersAmount,
+    decimal OrdersTotal,
     List<OrderListItemDto> Orders);
