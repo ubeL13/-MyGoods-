@@ -11,6 +11,7 @@ import {
   Typography,
 } from 'antd'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import {
   type TWriteOff,
@@ -23,6 +24,7 @@ import {
   WriteOffStatusTag,
 } from '@/entities/write-off'
 import { WriteOffFormModal } from '@/features/write-off-form'
+import { APP_ROUTES } from '@/shared/config/routes'
 import { formatDateTime } from '@/shared/lib'
 
 import { useWriteOffsPage } from '../model/useWriteOffsPage'
@@ -46,6 +48,9 @@ const columns: TableColumnsType<TWriteOff> = [
     title: '№',
     dataIndex: 'number',
     width: 70,
+    render: (number: number, writeOff) => (
+      <Link to={APP_ROUTES.writeOffDetail(writeOff.id)}>{number}</Link>
+    ),
   },
   {
     title: 'Дата',

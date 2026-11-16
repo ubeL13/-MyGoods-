@@ -39,3 +39,7 @@ export type TWriteOffCreateDto = {
   comment: string | null
   createdBy: string
 }
+
+export type TWriteOffRejectDto = {
+  reason: string
+}

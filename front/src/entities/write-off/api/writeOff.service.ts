@@ -11,7 +11,13 @@ import {
   mapWriteOffsPageDto,
   mapWriteOffsQuery,
 } from './writeOff.mapper'
-import { createWriteOffMock, getWriteOffsMock } from './writeOff.mock'
+import {
+  approveWriteOffMock,
+  createWriteOffMock,
+  getWriteOffByIdMock,
+  getWriteOffsMock,
+  rejectWriteOffMock,
+} from './writeOff.mock'
 
 export async function getWriteOffs(
   query: TWriteOffsQuery,
@@ -25,6 +31,27 @@ export async function createWriteOff(
   values: TWriteOffCreateValues,
 ): Promise<TWriteOff> {
   const data = await createWriteOffMock(values)
+
+  return mapWriteOffDto(data)
+}
+
+export async function getWriteOffById(writeOffId: string): Promise<TWriteOff> {
+  const data = await getWriteOffByIdMock(writeOffId)
+
+  return mapWriteOffDto(data)
+}
+
+export async function approveWriteOff(writeOffId: string): Promise<TWriteOff> {
+  const data = await approveWriteOffMock(writeOffId)
+
+  return mapWriteOffDto(data)
+}
+
+export async function rejectWriteOff(
+  writeOffId: string,
+  reason: string,
+): Promise<TWriteOff> {
+  const data = await rejectWriteOffMock(writeOffId, { reason })
 
   return mapWriteOffDto(data)
 }

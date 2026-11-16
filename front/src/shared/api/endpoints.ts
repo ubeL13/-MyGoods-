@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
   writeOffs: {
     list: v1('/write-offs'),
     byId: (writeOffId: string) => v1(`/write-offs/${writeOffId}`),
+    approve: (writeOffId: string) => v1(`/write-offs/${writeOffId}/approve`),
+    reject: (writeOffId: string) => v1(`/write-offs/${writeOffId}/reject`),
   },
   customers: {
     list: v1('/customers'),
