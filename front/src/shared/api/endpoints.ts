@@ -28,6 +28,10 @@ export const API_ENDPOINTS = {
     receive: (supplyId: string) => v1(`/supplies/${supplyId}/receive`),
     cancel: (supplyId: string) => v1(`/supplies/${supplyId}/cancel`),
   },
+  writeOffs: {
+    list: v1('/write-offs'),
+    byId: (writeOffId: string) => v1(`/write-offs/${writeOffId}`),
+  },
   customers: {
     list: v1('/customers'),
     byId: (customerId: string) => v1(`/customers/${customerId}`),

@@ -17,6 +17,7 @@ import {
   SupplyCreatePageLazy,
   SupplyDetailPageLazy,
   WarehousePageLazy,
+  WriteOffsPageLazy,
 } from '@/app/router/lazyPages'
 import { PageSuspense } from '@/app/router/PageSuspense'
 import { AdminLayout } from '@/app/ui/AdminLayout'
@@ -107,6 +108,14 @@ export const router = createBrowserRouter([
             element: (
               <PageSuspense>
                 <SupplyDetailPageLazy />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: ROUTE_SEGMENTS.writeOffs,
+            element: (
+              <PageSuspense>
+                <WriteOffsPageLazy />
               </PageSuspense>
             ),
           },

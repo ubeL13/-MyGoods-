@@ -90,6 +90,12 @@ export const CustomerDetailPageLazy = lazy(() =>
   })),
 )
 
+export const WriteOffsPageLazy = lazy(() =>
+  import('@/pages/admin/write-offs').then((module) => ({
+    default: module.WriteOffsPage,
+  })),
+)
+
 export const NotFoundPageLazy = lazy(() =>
   import('@/pages/not-found').then((module) => ({
     default: module.NotFoundPage,
