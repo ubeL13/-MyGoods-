@@ -1,7 +1,10 @@
 using MyGoods.Core.Entities;
+using MyGoods.Core.Enums;
 using MyGoods.Dto.Customers;
 using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
+using MyGoods.Dto.Supplies;
+using MyGoods.Dto.Suppliers;
 
 namespace MyGoods.Application.Helpers;
 
@@ -82,4 +85,97 @@ public static class MapperHelper
             item.Quantity,
             item.PriceAtOrder,
             item.PriceAtOrder * item.Quantity);
+
+    /// <summary>
+    /// Поставка → SupplyDto. Сумма принятого считается, только когда поставка принята.
+    /// </summary>
+    public static SupplyDto ToDto(Supply supply) =>
+        new(
+            supply.Id,
+            supply.Number,
+            supply.Status.ToString(),
+            supply.SupplierId,
+            supply.Supplier?.Name,
+            supply.ExpectedDate,
+            supply.Comment,
+            supply.TotalAmount,
+            supply.Status == SupplyStatus.Received
+                ? supply.Items.Sum(i => (i.ReceivedQuantity ?? 0) * i.PurchasePrice)
+                : null,
+            supply.CreatedAt,
+            supply.ReceivedAt,
+            supply.Items.Select(ToDto).ToList());
+
+    /// <summary>
+    /// Позиция поставки → SupplyItemDto.
+    /// </summary>
+    public static SupplyItemDto ToDto(SupplyItem item) =>
+        new(
+            item.ProductId,
+            item.Product?.Sku,
+            item.Product?.Name,
+            item.Quantity,
+            item.PurchasePrice,
+            item.ReceivedQuantity,
+            item.PurchasePrice * item.Quantity);
+
+    /// <summary>
+    /// Поставка → строка списка поставок.
+    /// </summary>
+    public static SupplyListItemDto ToListItemDto(Supply supply) =>
+        new(
+            supply.Id,
+            supply.Number,
+            supply.Status.ToString(),
+            supply.SupplierId,
+            supply.Supplier?.Name,
+            supply.ExpectedDate,
+            supply.Items.Count,
+            supply.TotalAmount,
+            supply.CreatedAt,
+            supply.ReceivedAt);
+    
+    /// <summary>
+    /// Поставщик → SupplierDto.
+    /// </summary>
+    public static SupplierDto ToDto(Supplier supplier) =>
+        new(
+            supplier.Id,
+            supplier.Name,
+            supplier.Inn,
+            supplier.ContactPerson,
+            supplier.Phone,
+            supplier.Email,
+            supplier.Address,
+            supplier.IsActive,
+            supplier.CreatedAt,
+            supplier.UpdatedAt
+        );
+    
+    /// <summary>
+    /// Покупатель с заказами → CustomerDetailsDto.
+    /// </summary>
+    public static CustomerDetailsDto ToDetailsDto(Customer customer)
+    {
+        // Сортируем заказы: новые сверху
+        var orders = customer.Orders
+            .OrderByDescending(o => o.CreatedAt)
+            .ThenByDescending(o => o.Number)
+            .ToList();
+
+        // Считаем сумму только неотменённых заказов
+        var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled).ToList();
+
+        return new CustomerDetailsDto(
+            customer.Id,
+            customer.Name,
+            customer.Phone,
+            customer.Email,
+            customer.Address,
+            customer.CreatedAt,
+            orders.Count,
+            activeOrders.Sum(o => o.TotalAmount),
+            orders.Select(ToListItemDto).ToList()
+        );
+    }
 }

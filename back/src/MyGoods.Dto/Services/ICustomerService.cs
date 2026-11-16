@@ -14,10 +14,10 @@ public interface ICustomerService
     Task<PagedResult<CustomerDto>> GetList(CustomerQueryDto query);
 
     /// <summary>
-    /// Покупатель по идентификатору. Если нет — NotFoundException (404).
+    /// Карточка покупателя с его заказами. Если нет — NotFoundException (404).
     /// </summary>
     /// <param name="id">Идентификатор покупателя</param>
-    Task<CustomerDto> GetById(Guid id);
+    Task<CustomerDetailsDto> GetById(Guid id);
 
     /// <summary>
     /// Создаёт покупателя. Телефон нормализуется; если такой уже есть — ConflictException (409).

@@ -43,4 +43,11 @@ public class FakeCustomerRepository : ICustomerRepository
     {
         return Task.FromResult((new List<Customer>(), 0));
     }
+    
+    /// <inheritdoc />
+    public Task<Customer?> ReadWithOrders(Guid id)
+    {
+        // Для тестов достаточно вернуть покупателя без заказов (или null, если его нет)
+        return Task.FromResult(Customers.FirstOrDefault(c => c.Id == id));
+    }
 }

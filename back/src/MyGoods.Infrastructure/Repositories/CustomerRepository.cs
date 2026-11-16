@@ -43,4 +43,11 @@ public class CustomerRepository(AppDbContext dbContext) : Repository<Customer>(d
 
         return (items, total);
     }
+
+    /// <inheritdoc />
+    public async Task<Customer?> ReadWithOrders(Guid id) =>
+        await Set
+            .Include(c => c.Orders)
+            .ThenInclude(o => o.Items)
+            .FirstOrDefaultAsync(c => c.Id == id);
 }

@@ -38,7 +38,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     /// Позиции заказов.
     /// </summary>
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-        
+    
+    /// <summary>
+    /// Поставщик товаров.
+    /// </summary>
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
+
+    /// <summary>
+    /// Поставки товара от поставщиков.
+    /// </summary>
+    public DbSet<Supply> Supplies => Set<Supply>();
+
+    /// <summary>
+    /// Позиции поставок.
+    /// </summary>
+    public DbSet<SupplyItem> SupplyItems => Set<SupplyItem>();
+
     /// <summary>
     /// Настройка модели: ключи, обязательные поля, связи.
     /// </summary>
@@ -143,6 +158,92 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // Один и тот же товар не должен встречаться в одном заказе дважды отдельными строками
             entity.HasIndex(oi => new { oi.OrderId, oi.ProductId }).IsUnique();
+        });
+        
+        modelBuilder.Entity<Supplier>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            entity.Property(s => s.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            // Уникальный индекс
+            entity.HasIndex(s => s.Name)
+                .IsUnique();
+
+            entity.Property(s => s.Inn)
+                .HasMaxLength(12);
+
+            entity.Property(s => s.ContactPerson)
+                .HasMaxLength(200);
+            
+            entity.Property(s => s.Phone)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(s => s.Email)
+                .HasMaxLength(150);
+
+            entity.Property(s => s.Address)
+                .HasMaxLength(500);
+
+            entity.Property(s => s.IsActive)
+                .HasDefaultValue(true);
+        
+            // Поставщика с поставками удалить нельзя — только перевести в архив
+            entity.HasMany(s => s.Supplies)
+                .WithOne(s => s.Supplier)
+                .HasForeignKey(s => s.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Supply>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            // Номер поставки генерируется базой автоматически, как у заказа
+            entity.Property(s => s.Number).UseIdentityAlwaysColumn();
+            entity.HasIndex(s => s.Number).IsUnique();
+
+            entity.Property(s => s.Comment).HasMaxLength(500);
+            entity.Property(s => s.TotalAmount).HasPrecision(12, 2);
+
+            // Индекс для списка поставок поставщика по дате
+            entity.HasIndex(s => new { s.SupplierId, s.CreatedAt });
+
+            // При удалении поставки удаляются и её позиции
+            entity.HasMany(s => s.Items)
+                .WithOne(i => i.Supply)
+                .HasForeignKey(i => i.SupplyId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SupplyItem>(entity =>
+        {
+            entity.HasKey(si => si.Id);
+
+            entity.Property(si => si.PurchasePrice).HasPrecision(12, 2);
+
+            // Нельзя удалить товар из каталога, если он есть в поставках
+            entity.HasOne(si => si.Product)
+                .WithMany()
+                .HasForeignKey(si => si.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Один товар — одна строка в поставке
+            entity.HasIndex(si => new { si.SupplyId, si.ProductId }).IsUnique();
+
+            // Защита на уровне базы: количество и цена положительные,
+            // принять можно от 0 до заказанного количества
+            entity.ToTable(t =>
+            {
+                t.HasCheckConstraint("CK_SupplyItems_Quantity", "\"Quantity\" > 0");
+                t.HasCheckConstraint("CK_SupplyItems_PurchasePrice", "\"PurchasePrice\" > 0");
+                t.HasCheckConstraint(
+                    "CK_SupplyItems_ReceivedQuantity",
+                    "\"ReceivedQuantity\" IS NULL OR (\"ReceivedQuantity\" >= 0 AND \"ReceivedQuantity\" <= \"Quantity\")");
+            });
         });
     }
 }
