@@ -238,6 +238,144 @@ namespace MyGoods.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MyGoods.Core.Entities.Supplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Inn")
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Suppliers");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.Supply", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly?>("ExpectedDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Number"));
+
+                    b.Property<DateTime?>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("SupplierId", "CreatedAt");
+
+                    b.ToTable("Supplies");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.SupplyItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("PurchasePrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReceivedQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SupplyId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SupplyId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("SupplyItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_SupplyItems_PurchasePrice", "\"PurchasePrice\" > 0");
+
+                            t.HasCheckConstraint("CK_SupplyItems_Quantity", "\"Quantity\" > 0");
+
+                            t.HasCheckConstraint("CK_SupplyItems_ReceivedQuantity", "\"ReceivedQuantity\" IS NULL OR (\"ReceivedQuantity\" >= 0 AND \"ReceivedQuantity\" <= \"Quantity\")");
+                        });
+                });
+
             modelBuilder.Entity("MyGoods.Core.Entities.Category", b =>
                 {
                     b.HasOne("MyGoods.Core.Entities.Category", "Parent")
@@ -300,6 +438,36 @@ namespace MyGoods.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("MyGoods.Core.Entities.Supply", b =>
+                {
+                    b.HasOne("MyGoods.Core.Entities.Supplier", "Supplier")
+                        .WithMany("Supplies")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.SupplyItem", b =>
+                {
+                    b.HasOne("MyGoods.Core.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyGoods.Core.Entities.Supply", "Supply")
+                        .WithMany("Items")
+                        .HasForeignKey("SupplyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Supply");
+                });
+
             modelBuilder.Entity("MyGoods.Core.Entities.Category", b =>
                 {
                     b.Navigation("Children");
@@ -320,6 +488,16 @@ namespace MyGoods.Infrastructure.Migrations
             modelBuilder.Entity("MyGoods.Core.Entities.Product", b =>
                 {
                     b.Navigation("RemainingProduct");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.Supplier", b =>
+                {
+                    b.Navigation("Supplies");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.Supply", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

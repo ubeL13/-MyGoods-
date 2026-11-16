@@ -21,4 +21,10 @@ public interface ICustomerRepository : IRepository<Customer>
     /// <param name="limit">Покупателей на странице</param>
     /// <returns>Покупатели страницы и общее количество найденных</returns>
     Task<(List<Customer> Items, int Total)> Search(string? search, int page, int limit);
+    
+    /// <summary>
+    /// Возвращает покупателя вместе с его заказами.
+    /// </summary>
+    /// <param name="id">Идентификатор покупателя</param>
+    Task<Customer?> ReadWithOrders(Guid id);
 }
