@@ -5,6 +5,7 @@ using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
 using MyGoods.Dto.Supplies;
 using MyGoods.Dto.Suppliers;
+using MyGoods.Dto.WriteOffs;
 
 namespace MyGoods.Application.Helpers;
 
@@ -178,4 +179,24 @@ public static class MapperHelper
             orders.Select(ToListItemDto).ToList()
         );
     }
+    
+    /// <summary>
+    /// Заявка на списание → WriteOffDto.
+    /// </summary>
+    public static WriteOffDto ToDto(WriteOff writeOff) =>
+        new(
+            writeOff.Id,
+            writeOff.Number,
+            writeOff.ProductId,
+            writeOff.Product?.Sku,
+            writeOff.Product?.Name,
+            writeOff.Quantity,
+            writeOff.Reason.ToString(),
+            writeOff.Comment,
+            writeOff.Status.ToString(),
+            writeOff.CreatedBy,
+            writeOff.CreatedAt,
+            writeOff.ReviewedAt,
+            writeOff.RejectionReason
+        );
 }

@@ -376,6 +376,62 @@ namespace MyGoods.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MyGoods.Core.Entities.WriteOff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Number"));
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("WriteOffs", t =>
+                        {
+                            t.HasCheckConstraint("CK_WriteOffs_Quantity", "\"Quantity\" > 0");
+                        });
+                });
+
             modelBuilder.Entity("MyGoods.Core.Entities.Category", b =>
                 {
                     b.HasOne("MyGoods.Core.Entities.Category", "Parent")
@@ -466,6 +522,17 @@ namespace MyGoods.Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Supply");
+                });
+
+            modelBuilder.Entity("MyGoods.Core.Entities.WriteOff", b =>
+                {
+                    b.HasOne("MyGoods.Core.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MyGoods.Core.Entities.Category", b =>
