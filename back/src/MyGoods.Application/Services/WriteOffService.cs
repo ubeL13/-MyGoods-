@@ -16,9 +16,9 @@ public class WriteOffService(
 {
     public async Task<PagedResult<WriteOffDto>> GetList(WriteOffQueryDto query)
     {
-        var status = query.Status == null ? null : Enum.Parse<WriteOffStatus>(query.Status);
-        var reason = query.Reason == null ? null : Enum.Parse<WriteOffReason>(query.Reason);
-
+        WriteOffStatus? status = string.IsNullOrWhiteSpace(query.Status) ? null : Enum.Parse<WriteOffStatus>(query.Status);
+        WriteOffReason? reason = string.IsNullOrWhiteSpace(query.Reason) ? null : Enum.Parse<WriteOffReason>(query.Reason);
+        
         var (items, total) = await writeOffRepository.Search(status, reason, query.Search, query.Page, query.Limit);
         var totalPages = (int)Math.Ceiling(total / (double)query.Limit);
 

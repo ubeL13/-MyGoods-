@@ -5,6 +5,7 @@ using MyGoods.Dto.Orders;
 using MyGoods.Dto.Products;
 using MyGoods.Dto.Supplies;
 using MyGoods.Dto.Suppliers;
+using MyGoods.Dto.WriteOffs;
 
 namespace MyGoods.Application.Helpers;
 
