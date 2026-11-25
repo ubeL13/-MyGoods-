@@ -53,6 +53,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     /// Позиции поставок.
     /// </summary>
     public DbSet<SupplyItem> SupplyItems => Set<SupplyItem>();
+    
+    /// <summary>
+    /// Заявки на списание товаров.
+    /// </summary>
+    public DbSet<WriteOff> WriteOffs => Set<WriteOff>();
 
     /// <summary>
     /// Настройка модели: ключи, обязательные поля, связи.
@@ -244,6 +249,34 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     "CK_SupplyItems_ReceivedQuantity",
                     "\"ReceivedQuantity\" IS NULL OR (\"ReceivedQuantity\" >= 0 AND \"ReceivedQuantity\" <= \"Quantity\")");
             });
+        });
+        
+        modelBuilder.Entity<WriteOff>(entity =>
+        {
+            entity.HasKey(w => w.Id);
+
+            // Номер заявки генерируется базой автоматически, как у заказов и поставок
+            entity.Property(w => w.Number).UseIdentityAlwaysColumn();
+            entity.HasIndex(w => w.Number).IsUnique();
+
+            entity.Property(w => w.CreatedBy)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(w => w.Comment)
+                .HasMaxLength(500);
+
+            entity.Property(w => w.RejectionReason)
+                .HasMaxLength(500);
+
+            // Товар нельзя удалить, если на него есть заявки
+            entity.HasOne(w => w.Product)
+                .WithMany()
+                .HasForeignKey(w => w.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Защита на уровне базы: нельзя списать 0 или отрицательное количество
+            entity.ToTable(t => t.HasCheckConstraint("CK_WriteOffs_Quantity", "\"Quantity\" > 0"));
         });
     }
 }
